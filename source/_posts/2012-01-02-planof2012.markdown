@@ -1,0 +1,31 @@
+---
+layout: post
+title: "2012展望" 
+date: 2012-06-08 23:22
+comments: true
+categories: 
+---
+
+### 参与开源软件
+
+* redis
+* ruby
+* lua
+* rails / sinatra
+* ruboto --- jruby sucks!
+
+### 不玩游戏了
+
+* 可能么？ 
+
+### emacs
+
+* 这个。。可以没有 
+
+### 读那几本重头书。
+
+* 这个要完成！
+
+### 学学儿科, 发展心理学
+
+* 一切为了孩子

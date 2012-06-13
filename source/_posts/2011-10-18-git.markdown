@@ -1,0 +1,23 @@
+---
+layout: post
+title: "git" 
+---
+
+* (use "git rm --cached <file>..." to unstage)
+
+~目录有东西，如何clone？
+cd 
+git init 
+git remote add origin remote_machine:~brentg/my_setup.git 
+git fetch 
+git branch master origin/master 
+git checkout master 
+
+
+### git pull http master 后，git log -p -n1 显示不出区别
+
+git log --oneline 看commit号, git diff commit号
+
+
+### git ls-files
+
