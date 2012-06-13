@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "s3c2410板子上跑ruby" 
-categories: 嵌入式
+categories: embeded
 ---
 
 * tool-chain
