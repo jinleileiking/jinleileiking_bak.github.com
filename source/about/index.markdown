@@ -1,0 +1,41 @@
+---
+layout: page
+title: "关于我"
+comments: true
+---
+
+
+## 自我介绍
+
+* 老实人
+* 喜欢编程ruby, c,linux,单片机老手,java, .net form,rails都会点
+* 熟练度: C > Ruby > Java > C# > Jquery = Javascript > html > css > Lua
+* 协议: RFID Protocol(EPC c1g2 ....) > TCP/IP (http, tcp/udp, ip, x.25/atm) 
+* 业务上: RFID, EPC, TCP/IP，中国移动企业一卡通，物联网
+* ~游戏  cwow:二区Coraline~
+* 其他: 喜欢足球，音乐，心理学，历史，经济学
+* 耳机：K66, HD495, DT231, MX500, MX400II, MX300, MX350, AKG 12P
+* 音箱: 3NOD N20G, 1900TIII, U2
+
+## 代码集散地
+* [Github](http://www.github.com/jinleileiking)
+  
+## 联系方式
+* [豆瓣](http://www.douban.com/people/jinleileiking/)
+* QQ: 125981281
+* msn: leiking@live.com
+* gtalk: jinleileiking@gmail.com
+* Email: jinleileiking@gmail.com
+* [twitter](http://www.twitter.com/jinleileiking)
+
+## 自己搞的小网站:
+
+* [很简单的聊天室](http://freebbs.heroku.com)
+* [多人博客](http://jllgl.heroku.com)
+* [从豆瓣抓取内容的博客](http://jinleileiking.heroku.com)
+* [实时聊天室root.123456](http://chatroom.heroku.com)
+
+## 闲言闲语
+
+想业余时间赚点小钱，有外包的叫我啊: ruby, rails, c    
+喜欢搞技术，从C开始，开始做TCP/IP的链路层工作（H3C），当时的目标是CISCO，后在津从事RFID工作，完成了一套协议，做了N个设备，后又带领团队通过了移动通信企业一卡通终端测试（也就是手机刷卡），被提升到所谓的系统部（不写代码，搞搞什么方案之类的），但由于离代码越来越远，闲时也多了，开始了学了学.NET，做了几个c# winform程序，但觉得太土了，于是用JAVA swing做了几个form程序，此间做了几个WM6的手机小游戏，直到最近用到了ruby，果断抛弃.NET和JAVA,用ruby做了几个网页，用gnome+ruby做了个form程序，后改为swing+jruby。目前读书中，想看看lisp等新知识。技术控。。。

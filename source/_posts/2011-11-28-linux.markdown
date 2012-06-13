@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "linux记录" 
+categories: linux
 ---
 
 ###  遗留

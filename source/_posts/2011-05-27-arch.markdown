@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "arch安装记录" 
+categories: linux
 ---
 
 ### 问题

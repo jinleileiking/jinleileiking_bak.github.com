@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "vim遇到的问题" 
+categories: vim
 ---
 * ack
 ** -a, --all-types       All file types searched;

@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "sinatra source code hacking" 
+categories: ruby
 ---
 
 ```
