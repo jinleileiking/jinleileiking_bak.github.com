@@ -27,6 +27,12 @@ categories: linux
 * mount /dev/sda1 /boot : ext2不支持问题：内核没吧ext2编译进去。用cd重编。。
 * emerge是通过wget来获取程序源代码的，所以应该是编辑/etc/wgetrc文件来配置httpxx。具体做法你可以参考这个文件，里边有范例的。
 
+### 设置时间
+
+* 设置硬件时间clock --set --date="07/05/12 11:22"
+* 硬件时间 同步到 系统时间 sudo hwclock --hctosys
+
+
 ### vbox
 
 * vbox ctrl+cv 原因是没有加入vbox组 
