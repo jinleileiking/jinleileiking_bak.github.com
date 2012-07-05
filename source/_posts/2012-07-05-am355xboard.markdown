@@ -1,0 +1,12 @@
+---
+layout: post
+title: "am355x 开发板记录"
+date: 2012-07-05 23:22
+comments: true
+categories: linux
+---
+
+
+# 无法将boot烧进nandflash启动
+
+经确认05.04.00.01不支持..我日....要了个文件,试试..扯淡么..
