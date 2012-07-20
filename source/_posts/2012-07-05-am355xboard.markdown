@@ -10,3 +10,14 @@ categories: linux
 # 无法将boot烧进nandflash启动
 
 经确认05.04.00.01不支持..我日....要了个文件,试试..扯淡么..
+
+
+# 交叉编译ruby
+
+先用codesourcey的工具链,发现没有pthread,1.9.3必须要用ptread,没办法,换angstrom工具链.
+
+还是不行,于是用1.9.2, 编译1.9.2时需要ruby187, 如果193会报错:
+
+`CC=arm-angstrom-linux-gnueabi-gcc  env ac_cv_func_setpgrp_void=yes ./configure --host=arm-angstrom-linux-gnueabi --prefix=$HOME/work/ruby --disable-pthread --enable-shared --disable-install-doc`
+
+编译终于TMD通过了,估计还要一堆.so
