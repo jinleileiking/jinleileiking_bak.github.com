@@ -2,14 +2,71 @@
 layout: post
 title: "linux记录" 
 categories: linux
+comments: true
 ---
 
-###  遗留
 
-* yaourt的proxy
+# 问题
+
+* xfce的图标快捷方式的proxy不能用.zshrc的，需要在.xinitrc中定义。狗血。。。
 * wget只改singleuser是否可以?
 
-### windows时间和linux时间不一致.
+# 常用命令
+
+* usermod -a -G ftp tony
+
+
+# samba
+
+`sudo mount //localhost/public /mnt/tmp -o users=jinleileiking`, `/etc/samba/smb.conf`中的public会变成public
+
+
+
+# 让terminator不滚动
+
+取消`scroll on output`
+
+# sshd & mount
+
+把`sshd_config`一定submodule用 internal-sftp. 就好使了.
+
+It's ChrootDirectory ownership problem, sshd will reject sftp connections to accounts that are set to chroot into any directory that has ownership/permissions that sshd doesn't consider secure. sshd's apparently strict ownership/permissions requirements dictate that every directory in the chroot path must be owned by root and only writable for the owner. So, for example, if the chroot environment is in a user's home directory both /home and /home/username must be owned by root and have permissions along the lines of 755 or 750 ( group ownership should allow user to access ).
+
+`sudo mount -t ntfs -o uid=0,gid=1002,umask=0022 /dev/sda5 /home/ssh/base`
+
+好长时间不好使, 我把`/etc/fstab`去掉自动mount, 我自动mount是` rw的`,就好使了
+
+```
+sudo mount -t ntfs -o uid=0,gid=100,umask=0022 /dev/sda5 /mnt/share
+sudo mount --bind -o uid=0,gid=100,umask=0022 /mnt/share/movie /home/ssh/base
+```
+
+# cdrom 相关
+
+* 没有/dev/cdrom:
+
+`rm /etc/udev/rules.d/70-persistent-cd.rules`
+
+* mount 显示 no media
+
+把盘放进去就可以了...!! 怎么打开? `eject /dev/cdrom`
+
+`sudo mount -t iso9660 /dev/cdrom /mnt/tmp`
+
+* cdrom -> iso
+
+`dd if=/dev/cdrom of=./1.iso`
+
+# 设置时间
+
+* 设置硬件时间clock --set --date="07/05/12 11:22"
+* 硬件时间 同步到 系统时间 sudo hwclock --hctosys
+
+# free 缓存
+
+* `echo 3 > /proc/sys/vm/drop_caches` # free ..
+
+# windows时间和linux时间不一致.
 
 * gentoo 用的是utc时间, windows用的local
 * gentoo 改
@@ -20,17 +77,342 @@ categories: linux
 /etc/init.d/hwclock restart
 ```
 
-### nfs
+
+# vbox
+
+* vbox ctrl+cv 原因是没有加入vbox组 
+
+* 扩大vbox分区: 
+
+VBoxManage modifyhd xxx.vdi --resize 40000
+
+用gentoodisk启动
+
+fdisk 改分区大小
+
+resize2fs.... done... so easy
+
+linux访问共享的win文件夹
+
+* sudo mount -t vboxsf d_drive /mnt/win7, 犯了个错误，vboxfs.....
+
+# nfs
 
 /etc/init.d/rpcbind start
 ip 地址别错了..
 mount -v  -t nfs 192.168.1.102:/c/Codes /mnt/tmp
 如果显示超时,关闭windows防火墙,fuck!!!
 
+# 查找大文件夹
 
-### 问题
-* xfce的图标快捷方式的proxy不能用.zshrc的，需要在.xinitrc中定义。狗血。。。
-* pacman 的wget的proxy不能共享环境变量，需要在~/.wgetrc中找。。。。
+`du -s * | sort -nr | head`
 
-* echo 3 > /proc/sys/vm/drop_caches # free ..
+# 安装haskell的pandoc
+
+首先编译遇到内存溢出问题, 是ghc7.4.1以前有bug,用7.4.1能编过.
+
+然后遇到说network依赖的ghc版本不对的问题,pasace 用3 network用2. 这个执行haskell-updater, unmask安装不成功的package就可以.
+
+然后遇到latex问题,报错,装了texlive-fontsrecommands也不好使.中文乱码.
+
+然后原来需要xelex, 且指定中文名.
+
+`pandoc  srs.md -o srs.pdf --latex-engine=xelatex -V mainfont=WenQuanYi\ Micro\ Hei\ Mono`
+
+```
+➜  r2000 git:(master) ✗ eix ghc -I       
+[I] dev-lang/ghc
+     Available versions:  (~)6.10.4-r1 6.12.3 6.12.3-r2 (~)7.0.4 (~)7.4.1 (~)7.4.1-r1 {bash-completion binary doc ghcbootstrap llvm}
+     Installed versions:  7.4.1-r1(10:52:48 PM 07/29/2012)(-binary -doc -ghcbootstrap -llvm)
+     Homepage:            http://www.haskell.org/ghc/
+     Description:         The Glasgow Haskell Compiler
+
+➜  r2000 git:(master) ✗ eix pandoc -I
+[I] app-text/pandoc
+     Available versions:  (~)1.8.1.1-r1!t ~1.9.1.2 ~1.9.2 ~1.9.3 (~)1.9.4.1-r2!t {doc highlight hscolour pdf profile test}
+     Installed versions:  1.9.4.1-r2!t(05:04:51 PM 08/01/2012)(-doc -hscolour -profile -test)
+     Homepage:            http://johnmacfarlane.net/pandoc
+     Description:         Conversion between markup formats
+
+[D] dev-haskell/pandoc-types
+     Available versions:  (~)1.8 ~1.9.1 {doc hscolour profile}
+     Installed versions:  1.9.1(10:39:31 AM 07/30/2012)(-doc -hscolour -profile)
+     Homepage:            http://johnmacfarlane.net/pandoc
+     Description:         Types for representing a structured document
+
+Found 2 matches.
+➜  r2000 git:(master) ✗ eix texlive -I
+[I] app-text/texlive-core
+     Available versions:  2011-r6 ~2011-r7 ~2012 {X cjk doc source tk xetex}
+     Installed versions:  2011-r6(09:18:07 PM 08/01/2012)(X xetex -cjk -doc -source -tk)
+     Homepage:            http://tug.org/texlive/
+     Description:         A complete TeX distribution
+
+[I] dev-texlive/texlive-basic
+     Available versions:  2011-r1 ~2012 {doc source}
+     Installed versions:  2011-r1(04:03:02 PM 07/27/2012)(-doc -source)
+     Homepage:            http://www.tug.org/texlive/
+     Description:         TeXLive Essential programs and files
+
+[I] dev-texlive/texlive-documentation-base
+     Available versions:  2011 ~2012 {source}
+     Installed versions:  2011(04:02:41 PM 07/27/2012)(-source)
+     Homepage:            http://www.tug.org/texlive/
+     Description:         TeXLive TeX Live documentation
+
+[I] dev-texlive/texlive-fontsrecommended
+     Available versions:  2011 ~2012 {doc source}
+     Installed versions:  2011(06:19:48 PM 08/01/2012)(-doc -source)
+     Homepage:            http://www.tug.org/texlive/
+     Description:         TeXLive Recommended fonts
+
+[I] dev-texlive/texlive-fontutils
+     Available versions:  2011 ~2012 {doc source}
+     Installed versions:  2011(04:03:12 PM 07/27/2012)(-doc -source)
+     Homepage:            http://www.tug.org/texlive/
+     Description:         TeXLive Graphics and font utilities
+
+[I] dev-texlive/texlive-genericrecommended
+     Available versions:  2011 ~2012 {doc source}
+     Installed versions:  2011(09:18:18 PM 08/01/2012)(-doc -source)
+     Homepage:            http://www.tug.org/texlive/
+     Description:         TeXLive Recommended generic packages
+
+[I] dev-texlive/texlive-latex
+     Available versions:  2011 ~2012 {doc source}
+     Installed versions:  2011(04:03:28 PM 07/27/2012)(-doc -source)
+     Homepage:            http://www.tug.org/texlive/
+     Description:         TeXLive Basic LaTeX packages
+
+[I] dev-texlive/texlive-latexextra
+     Available versions:  2011-r2 ~2012 {doc source}
+     Installed versions:  2011-r2(09:30:40 PM 08/01/2012)(-doc -source)
+     Homepage:            http://www.tug.org/texlive/
+     Description:         TeXLive LaTeX supplementary packages
+
+[I] dev-texlive/texlive-latexrecommended
+     Available versions:  2011 ~2012 {doc source}
+     Installed versions:  2011(04:03:53 PM 07/27/2012)(-doc -source)
+     Homepage:            http://www.tug.org/texlive/
+     Description:         TeXLive LaTeX recommended packages
+
+[I] dev-texlive/texlive-mathextra
+     Available versions:  2011 ~2012 ~2012-r1 {doc source}
+     Installed versions:  2011(09:18:26 PM 08/01/2012)(-doc -source)
+     Homepage:            http://www.tug.org/texlive/
+     Description:         TeXLive Advanced math typesetting
+
+[I] dev-texlive/texlive-pictures
+     Available versions:  2011 ~2011-r1 ~2012 {doc source}
+     Installed versions:  2011(09:18:40 PM 08/01/2012)(-doc -source)
+     Homepage:            http://www.tug.org/texlive/
+     Description:         TeXLive Graphics packages and programs
+
+[I] dev-texlive/texlive-xetex
+     Available versions:  2011 ~2012 {X doc source}
+     Installed versions:  2011(09:30:55 PM 08/01/2012)(X -doc -source)
+     Homepage:            http://www.tug.org/texlive/
+     Description:         TeXLive XeTeX packages
+
+Found 12 matches.
+➜  r2000 git:(master) ✗ eix latex -I
+[I] dev-texlive/texlive-latex
+     Available versions:  2011 ~2012 {doc source}
+     Installed versions:  2011(04:03:28 PM 07/27/2012)(-doc -source)
+     Homepage:            http://www.tug.org/texlive/
+     Description:         TeXLive Basic LaTeX packages
+
+[I] dev-texlive/texlive-latexextra
+     Available versions:  2011-r2 ~2012 {doc source}
+     Installed versions:  2011-r2(09:30:40 PM 08/01/2012)(-doc -source)
+     Homepage:            http://www.tug.org/texlive/
+     Description:         TeXLive LaTeX supplementary packages
+
+[I] dev-texlive/texlive-latexrecommended
+     Available versions:  2011 ~2012 {doc source}
+     Installed versions:  2011(04:03:53 PM 07/27/2012)(-doc -source)
+     Homepage:            http://www.tug.org/texlive/
+     Description:         TeXLive LaTeX recommended packages
+
+[I] virtual/latex-base
+     Available versions:  1.0
+     Installed versions:  1.0(04:03:58 PM 07/27/2012)
+     Description:         Virtual for basic LaTeX bin
+```
+
+# startx 显示 no proctol specified
+
+删去.Xauth* 和.servauth.*
+
+
+# 批量改扩展名
+
+```
+find . -type f -name '*.JPG' -exec rename 'JPG' 'jpg' {} \;
+```
+
+
+# awesome支持polkit,consolekit
+
+If you want to use the awesome menu to let your computer restart/shutdown/hibernate/suspend, You should do this:
+
+gentoo:
+
+* You MUST emerge with use +polkit +pam :
+
+```
+➜  ~ git:(master) ✗ epv dbus dbus-glib pambase shadow  upower polkit awesome consolekit
+zsh: correct 'dbus' to '.dbus' [nyae]? n
+
+
+These are the packages that would be merged, in order:
+
+Calculating dependencies... done!
+[ebuild   R    ] sys-apps/dbus-1.4.20  USE="X -debug -doc (-selinux) -static-libs -test" 0 kB
+[ebuild   R    ] dev-libs/dbus-glib-0.98  USE="-debug -doc -static-libs -test" 0 kB
+[ebuild   R    ] x11-wm/awesome-3.4.11  USE="dbus -doc" 0 kB
+[ebuild   R    ] sys-auth/polkit-0.104-r1  USE="gtk introspection nls pam -debug -doc -examples -kde (-selinux) (-systemd)" 0 kB
+[ebuild   R    ] sys-auth/consolekit-0.4.5_p20120320  USE="acl pam policykit -debug -doc (-selinux) -test" 0 kB
+[ebuild   R    ] sys-power/upower-0.9.16  USE="introspection -debug -doc -ios" 0 kB
+[ebuild   R    ] sys-auth/pambase-20101024-r2  USE="consolekit cracklib sha512 -debug -gnome-keyring -minimal -mktemp -pam_krb5 -pam_ssh -passwdqc (-selinux)" 0 kB
+[ebuild   R    ] sys-apps/shadow-4.1.4.3  USE="cracklib nls pam -audit (-selinux) -skey" 1,762 kB
+
+Total: 8 packages (8 reinstalls), Size of downloads: 1,762 kB
+```
+
+* kernel MUST enable:
+
+```
+➜  ~ git:(master) ✗  grep audit -i  /usr/src/linux/.config  
+CONFIG_AUDIT_ARCH=y
+CONFIG_AUDIT=y
+CONFIG_AUDITSYSCALL=y
+CONFIG_AUDIT_WATCH=y
+CONFIG_AUDIT_TREE=y
+```
+
+* .xinitrc MUST have:
+
+```
+exec ck-launch-session dbus-launch --sh-syntax --exit-with-session awesome >> ~/.awesome_stdout 2>> ~/.awesome_stderr
+```
+
+* dbus, consolekit MUST start:
+
+```
+➜  ~ git:(master) ✗ rc-update
+                  
+           consolekit |      default                   
+                 dbus |      default                 
+```
+
+* following the ARCH bash style do the auto login, here is my zsh config:
+
+```
+➜  ~ git:(master) ✗ cat /etc/inittab 
+#
+# /etc/inittab:  This file describes how the INIT process should set up
+#                the system in a certain run-level.
+#
+# Author:  Miquel van Smoorenburg, <miquels@cistron.nl>
+# Modified by:  Patrick J. Volkerding, <volkerdi@ftp.cdrom.com>
+# Modified by:  Daniel Robbins, <drobbins@gentoo.org>
+# Modified by:  Martin Schlemmer, <azarah@gentoo.org>
+# Modified by:  Mike Frysinger, <vapier@gentoo.org>
+# Modified by:  Robin H. Johnson, <robbat2@gentoo.org>
+#
+# $Header: /var/cvsroot/gentoo-x86/sys-apps/sysvinit/files/inittab-2.87,v 1.1 2010/01/08 16:55:07 williamh Exp $
+
+# Default runlevel.
+id:3:initdefault:
+
+# System initialization, mount local filesystems, etc.
+si::sysinit:/sbin/rc sysinit
+
+# Further system initialization, brings up the boot runlevel.
+rc::bootwait:/sbin/rc boot
+
+l0:0:wait:/sbin/rc shutdown 
+l0s:0:wait:/sbin/halt -dhp
+l1:1:wait:/sbin/rc single
+l2:2:wait:/sbin/rc nonetwork
+l3:3:wait:/sbin/rc default
+l4:4:wait:/sbin/rc default
+l5:5:wait:/sbin/rc default
+l6:6:wait:/sbin/rc reboot
+l6r:6:wait:/sbin/reboot -dk
+#z6:6:respawn:/sbin/sulogin
+
+# new-style single-user
+su0:S:wait:/sbin/rc single
+su1:S:wait:/sbin/sulogin
+
+# TERMINALS
+#c1:12345:respawn:/sbin/agetty 38400 tty1 linux
+c1:5:respawn:/sbin/agetty  -a jinleileiking -8 -s 38400 tty1 linux
+c2:2345:respawn:/sbin/agetty 38400 tty2 linux
+c3:2345:respawn:/sbin/agetty 38400 tty3 linux
+c4:2345:respawn:/sbin/agetty 38400 tty4 linux
+c5:2345:respawn:/sbin/agetty 38400 tty5 linux
+c6:2345:respawn:/sbin/agetty 38400 tty6 linux
+
+# SERIAL CONSOLES
+#s0:12345:respawn:/sbin/agetty 9600 ttyS0 vt100
+#s1:12345:respawn:/sbin/agetty 9600 ttyS1 vt100
+
+# What to do at the "Three Finger Salute".
+ca:12345:ctrlaltdel:/sbin/shutdown -r now
+
+# Used by /etc/init.d/xdm to control DM startup.
+# Read the comments in /etc/init.d/xdm for more
+# info. Do NOT remove, as this will start nothing
+# extra at boot if /etc/init.d/xdm is not added
+# to the "default" runlevel.
+x:a:once:/etc/X11/startDM.sh
+
+
+
+➜  ~ git:(master) ✗ cat .zprofile
+
+# New environment setting added by Sourcery CodeBench Lite for ARM EABI on Thu Jul 05 17:04:19 CST 2012 1.
+# The unmodified version of this file is saved in /home/jinleileiking/.zprofile2131715756.
+# Do NOT modify these lines; they are used to uninstall.
+PATH="/home/jinleileiking/crosstools/CodeSourcery/Sourcery_CodeBench_Lite_for_ARM_EABI/bin:${PATH}"
+export PATH
+# End comments by InstallAnywhere on Thu Jul 05 17:04:19 CST 2012 1.
+
+
+if [[ -z $DISPLAY ]] && [[ $(tty) = /dev/tty1 ]]; then
+  #exec startx -- vt01
+  exec startx 
+  # Could use xinit instead of startx
+  #exec xinit -- /usr/bin/X -nolisten tcp vt7
+fi
+```
+
+* Modify your rc.lua:
+
+```
+local upower = [[dbus-send --print-reply \
+--system \
+--dest=org.freedesktop.UPower \
+/org/freedesktop/UPower \
+org.freedesktop.UPower.]]
+local consolkit = [[dbus-send --print-reply \
+--system \
+--dest="org.freedesktop.ConsoleKit" \
+/org/freedesktop/ConsoleKit/Manager \
+org.freedesktop.ConsoleKit.Manager.]]
+
+mymainmenu = awful.menu({ items = { { "awesome", myawesomemenu, beautiful.awesome_icon },
+                                    { "terminal", terminal },
+                                    { "chromium", shell_cmd .. "chromium"},
+                                    { "lock", "slock" },
+                                    { "Suspend", function() awful.util.spawn(upower.."Suspend") end },
+                                    { "Hibernate", function () awful.util.spawn(upower.."Hibernate") end },
+                                    { "Restart", consolkit.."Restart", icon_path.."restart.png" },
+                                    { "Shutdown", consolkit.."Stop", icon_path.."poweroff.png" },
+                                  }
+                        })
+```
 

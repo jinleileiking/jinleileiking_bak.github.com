@@ -6,11 +6,96 @@ comments: true
 categories: linux
 ---
 
+# system  to nand
+
+## mlo & uboot from sdcard
+
+
+```
+mmc rescan; nand erase 0x0 0x280000 ;
+nandecc hw 2;
+fatload mmc 0 0x81000000 MLO_nand;
+nand write 0x81000000 0x0 0x20000;
+nand write 0x81000000 0x20000 0x20000;
+nand write 0x81000000 0x40000 0x20000;
+nand write 0x81000000 0x60000 0x20000;
+fatload mmc 0 0x81000000 u-boot_nand.img;
+nand write 0x81000000 0x80000 0x1E0000;
+```
+
+```
+mmc rescan; nand erase 0x0 0x280000 ; nandecc hw 2; fatload mmc 0 0x81000000 MLO_nand; nand write 0x81000000 0x0 0x20000; nand write 0x81000000 0x20000 0x20000; nand write 0x81000000 0x40000 0x20000; nand write 0x81000000 0x60000 0x20000; fatload mmc 0 0x81000000 u-boot_nand.img; nand write 0x81000000 0x80000 0x1E0000;
+```
+## kernel from sdard
+
+```
+mmc rescan ;
+nandecc hw 2;
+mw.b 0x82000000 0xff 0x500000;
+fatload mmc 0 0x82000000 uimage;
+nandecc hw 2;
+nand erase 0x00280000 0x00500000;
+nand write 0x82000000 0x00280000 0x500000
+```
+
+```
+mmc rescan ; nandecc hw 2; mw.b 0x82000000 0xff 0x500000; fatload mmc 0 0x82000000 uimage; nandecc hw 2; nand erase 0x00280000 0x00500000; nand write 0x82000000 0x00280000 0x500000
+```
+
+
+## make ubifs fs
+
+```
+e mtd-tools
+mkfs.ubifs -r base/ -F -o ubifs.img -m 2048 -e 126976 -c 1580
+ubinize -o ubi.img -m 2048 -p 128KiB -s 512 -O 2048 ubinize.cfg
+```
+## flash ubifs to nand from sdcard
+
+In linux:
+
+```
+ubiformat /dev/mtd7 -f ubi.img -s 512 -O 2048
+```
+
+
+```
+mw.b 0x82000000 0xFF 0xFC0000
+mmc rescan
+fatload mmc 0 0x82000000 ubi.img
+nand erase 0x00780000 0xF880000
+nandecc hw 2
+nand write 0x82000000 0x780000 0xFC0000
+```
+
+not ok..
+
+# build uboot
+
+```
+export PATH=$PATH:`pwd`
+make O=am335x CROSS_COMPILE=arm-arago-linux-gnueabi- ARCH=arm am335x_evm
+```
+
+
+
+# linux从nand启动, rootfs从nfs
+
+```
+set nand_boot 'echo Linux from nand, using nfs; run nfs_args; nandecc hw 2; nand read.i ${kloadaddr} ${nand_src_addr} ${nand_img_siz}; bootm ${kloadaddr}'
+set nfs_args 'run bootargs_defaults;setenv bootargs ${bootargs} root=/dev/nfs nfsroot=${serverip}:${rootpath},${nfsopts} rw ip=dhcp'
+set serverip 192.168.1.100
+set rootpath '/home/jinleileiking/work/nfsboot'
+```
 
 # 无法将boot烧进nandflash启动
 
 经确认05.04.00.01不支持..我日....要了个文件,试试..扯淡么..
 
+
+------------------------------------------------------
+
+ruby作为一种动态语言,具有代码量小,语言灵活,支持函数式编程,闭包,反射等功能.是目前比较流行的语言,和python一起作为构建webservice的首选.目前大型的网站都有从php,java,.net转为python/ruby的势头.ruby的rails网站应用更为红火,本文讨论了在am355x demo版(下一代平台)上实现sinatra构建的webservice可能性.统计了需要的flash和ram大小.
 
 # 交叉编译ruby
 
@@ -18,6 +103,60 @@ categories: linux
 
 还是不行,于是用1.9.2, 编译1.9.2时需要ruby187, 如果193会报错:
 
+192成功
+
 `CC=arm-angstrom-linux-gnueabi-gcc  env ac_cv_func_setpgrp_void=yes ./configure --host=arm-angstrom-linux-gnueabi --prefix=$HOME/work/ruby --disable-pthread --enable-shared --disable-install-doc`
 
 编译终于TMD通过了,估计还要一堆.so
+
+成功了,但是segmentation fault....
+
+搞1.9.2, 折腾半天终于得出最终秘籍:
+
+```
+env ac_cv_func_setpgrp_void=yes ./configure --host=arm-angstrom-linux-gnueabi --prefix= --enable-shared --disable-install-doc --with-opt-dir=/home/jinleileiking/work/ruby_cross/zlib-1.2.7/lib/usr/local --disable-ipv6
+sudo make DESTDIR=/home/jinleileiking/work/nfsboot install
+```
+env ac_cv_func_setpgrp_void=yes : 最新版本已经改正,但192没有.
+
+--prefix= 生成的gem文件会用`#!/bin/rury`,如果不用这句话是`usr/local/bin/ruby`
+
+--enable-shared 动态库生成
+
+--with-opt-dir 指明zlib的目录, 需要交叉编译zlib1.2.7,注意1.2.5的zlib交叉编译不好使.用1.2.7的,解决zlib报错,在编译zlib时,会加上L=/hom....../usr/local/lib
+
+--disable-ipv6 解决socket报错
+
+完成后gem list 成功
+
+大小约50m(没裁剪)
+
+# 安装sinatra
+
+拷贝sinatra相关的依赖包到一个目录,从rubygems下载,执行`gem install  sinatra-1.3.2.gem'
+
+# 执行sinatra
+
+`ruby web.rb`
+
+```
+# myapp.rb
+require 'sinatra'
+
+get '/' do
+  'Hello world!'
+end
+```
+
+在浏览器上打`http://10.86.34.5:4567/`即可看见hello world
+
+
+内存占用:  `1838 root     19888 S    ruby web.rb ` 差不多20m
+
+
+后续研究sinatra如何和linux进程通信
+
+
+# 使base文件系统支持wlan
+
+angstrom使用的是debian的rc. 学习了一通...

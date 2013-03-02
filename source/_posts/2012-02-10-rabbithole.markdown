@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "rabbithole影评" 
+comments: true
 ---
 
 这个片子起初看觉得很乏味，但越向后看就越觉得有深度，很真实。
