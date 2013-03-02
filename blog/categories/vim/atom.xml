@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: vim | 童童爸的博客]]></title>
+  <link href="http://jinleileiking.github.com/blog/categories/vim/atom.xml" rel="self"/>
+  <link href="http://jinleileiking.github.com/"/>
+  <updated>2013-03-02T18:22:26+08:00</updated>
+  <id>http://jinleileiking.github.com/</id>
+  <author>
+    <name><![CDATA[jinleileiking]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[vim遇到的问题]]></title>
+    <link href="http://jinleileiking.github.com/2011/06/27/vim/"/>
+    <updated>2011-06-27T00:00:00+08:00</updated>
+    <id>http://jinleileiking.github.com/2011/06/27/vim</id>
+    <content type="html"><![CDATA[<ul>
+<li><p>ack
+** -a, --all-types       All file types searched;</p></li>
+<li><p>有几个插件和输入法冲突: acp, autoclose, delimate</p></li>
+<li>cscope</li>
+</ul>
+
+
+<p><code>
+!cscope -Rbq
+:cscope add cscope.out
+:cs find 3 &lt;C-R&gt;&lt;C-W&gt;
+遇到cscope add 不成功的问题，：目录不能有空格。。。。
+</code></p>
+
+<h3>Plugins</h3>
+
+<h4>ack</h4>
+
+<ul>
+<li>:Ack 'Item\d' # 这样好使。。。。。</li>
+</ul>
+
+
+<h4>todo</h4>
+
+<ul>
+<li>怎么让不好使的插件支持中文输入法</li>
+<li>vimim</li>
+<li>vundle</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+</feed>

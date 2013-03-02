@@ -1,0 +1,1479 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title><![CDATA[童童爸的博客]]></title>
+  <link href="http://jinleileiking.github.com/atom.xml" rel="self"/>
+  <link href="http://jinleileiking.github.com/"/>
+  <updated>2013-03-02T18:22:26+08:00</updated>
+  <id>http://jinleileiking.github.com/</id>
+  <author>
+    <name><![CDATA[jinleileiking]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+    <entry>
+      
+
+
+
+
+<title type="html"><![CDATA[am355x 开发板记录]]></title>
+<link href="http://jinleileiking.github.com/2012/07/05/am355xboard/"/>
+<updated>2012-07-05T23:22:00+08:00</updated>
+<id>http://jinleileiking.github.com/2012/07/05/am355xboard</id>
+
+      <content type="html"><![CDATA[<h1>system  to nand</h1>
+
+<h2>mlo &amp; uboot from sdcard</h2>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>mmc rescan; nand erase 0x0 0x280000 ;
+</span><span class='line'>nandecc hw 2;
+</span><span class='line'>fatload mmc 0 0x81000000 MLO_nand;
+</span><span class='line'>nand write 0x81000000 0x0 0x20000;
+</span><span class='line'>nand write 0x81000000 0x20000 0x20000;
+</span><span class='line'>nand write 0x81000000 0x40000 0x20000;
+</span><span class='line'>nand write 0x81000000 0x60000 0x20000;
+</span><span class='line'>fatload mmc 0 0x81000000 u-boot_nand.img;
+</span><span class='line'>nand write 0x81000000 0x80000 0x1E0000;</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>mmc rescan; nand erase 0x0 0x280000 ; nandecc hw 2; fatload mmc 0 0x81000000 MLO_nand; nand write 0x81000000 0x0 0x20000; nand write 0x81000000 0x20000 0x20000; nand write 0x81000000 0x40000 0x20000; nand write 0x81000000 0x60000 0x20000; fatload mmc 0 0x81000000 u-boot_nand.img; nand write 0x81000000 0x80000 0x1E0000;</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>kernel from sdard</h2>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>mmc rescan ;
+</span><span class='line'>nandecc hw 2;
+</span><span class='line'>mw.b 0x82000000 0xff 0x500000;
+</span><span class='line'>fatload mmc 0 0x82000000 uimage;
+</span><span class='line'>nandecc hw 2;
+</span><span class='line'>nand erase 0x00280000 0x00500000;
+</span><span class='line'>nand write 0x82000000 0x00280000 0x500000</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>mmc rescan ; nandecc hw 2; mw.b 0x82000000 0xff 0x500000; fatload mmc 0 0x82000000 uimage; nandecc hw 2; nand erase 0x00280000 0x00500000; nand write 0x82000000 0x00280000 0x500000</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>make ubifs fs</h2>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>e mtd-tools
+</span><span class='line'>mkfs.ubifs -r base/ -F -o ubifs.img -m 2048 -e 126976 -c 1580
+</span><span class='line'>ubinize -o ubi.img -m 2048 -p 128KiB -s 512 -O 2048 ubinize.cfg</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>flash ubifs to nand from sdcard</h2>
+
+<p>In linux:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>ubiformat /dev/mtd7 -f ubi.img -s 512 -O 2048</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>mw.b 0x82000000 0xFF 0xFC0000
+</span><span class='line'>mmc rescan
+</span><span class='line'>fatload mmc 0 0x82000000 ubi.img
+</span><span class='line'>nand erase 0x00780000 0xF880000
+</span><span class='line'>nandecc hw 2
+</span><span class='line'>nand write 0x82000000 0x780000 0xFC0000</span></code></pre></td></tr></table></div></figure>
+
+
+<p>not ok..</p>
+
+<h1>build uboot</h1>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>export PATH=$PATH:`pwd`
+</span><span class='line'>make O=am335x CROSS_COMPILE=arm-arago-linux-gnueabi- ARCH=arm am335x_evm</span></code></pre></td></tr></table></div></figure>
+
+
+<h1>linux从nand启动, rootfs从nfs</h1>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>set nand_boot 'echo Linux from nand, using nfs; run nfs_args; nandecc hw 2; nand read.i ${kloadaddr} ${nand_src_addr} ${nand_img_siz}; bootm ${kloadaddr}'
+</span><span class='line'>set nfs_args 'run bootargs_defaults;setenv bootargs ${bootargs} root=/dev/nfs nfsroot=${serverip}:${rootpath},${nfsopts} rw ip=dhcp'
+</span><span class='line'>set serverip 192.168.1.100
+</span><span class='line'>set rootpath '/home/jinleileiking/work/nfsboot'</span></code></pre></td></tr></table></div></figure>
+
+
+<h1>无法将boot烧进nandflash启动</h1>
+
+<p>经确认05.04.00.01不支持..我日&#8230;.要了个文件,试试..扯淡么..</p>
+
+<hr />
+
+<p>ruby作为一种动态语言,具有代码量小,语言灵活,支持函数式编程,闭包,反射等功能.是目前比较流行的语言,和python一起作为构建webservice的首选.目前大型的网站都有从php,java,.net转为python/ruby的势头.ruby的rails网站应用更为红火,本文讨论了在am355x demo版(下一代平台)上实现sinatra构建的webservice可能性.统计了需要的flash和ram大小.</p>
+
+<h1>交叉编译ruby</h1>
+
+<p>先用codesourcey的工具链,发现没有pthread,1.9.3必须要用ptread,没办法,换angstrom工具链.</p>
+
+<p>还是不行,于是用1.9.2, 编译1.9.2时需要ruby187, 如果193会报错:</p>
+
+<p>192成功</p>
+
+<p><code>CC=arm-angstrom-linux-gnueabi-gcc  env ac_cv_func_setpgrp_void=yes ./configure --host=arm-angstrom-linux-gnueabi --prefix=$HOME/work/ruby --disable-pthread --enable-shared --disable-install-doc</code></p>
+
+<p>编译终于TMD通过了,估计还要一堆.so</p>
+
+<p>成功了,但是segmentation fault&#8230;.</p>
+
+<p>搞1.9.2, 折腾半天终于得出最终秘籍:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>env ac_cv_func_setpgrp_void=yes ./configure --host=arm-angstrom-linux-gnueabi --prefix= --enable-shared --disable-install-doc --with-opt-dir=/home/jinleileiking/work/ruby_cross/zlib-1.2.7/lib/usr/local --disable-ipv6
+</span><span class='line'>sudo make DESTDIR=/home/jinleileiking/work/nfsboot install</span></code></pre></td></tr></table></div></figure>
+
+
+<p>env ac_cv_func_setpgrp_void=yes : 最新版本已经改正,但192没有.</p>
+
+<p>&#8211;prefix= 生成的gem文件会用<code>#!/bin/rury</code>,如果不用这句话是<code>usr/local/bin/ruby</code></p>
+
+<p>&#8211;enable-shared 动态库生成</p>
+
+<p>&#8211;with-opt-dir 指明zlib的目录, 需要交叉编译zlib1.2.7,注意1.2.5的zlib交叉编译不好使.用1.2.7的,解决zlib报错,在编译zlib时,会加上L=/hom&#8230;&#8230;/usr/local/lib</p>
+
+<p>&#8211;disable-ipv6 解决socket报错</p>
+
+<p>完成后gem list 成功</p>
+
+<p>大小约50m(没裁剪)</p>
+
+<h1>安装sinatra</h1>
+
+<p>拷贝sinatra相关的依赖包到一个目录,从rubygems下载,执行`gem install  sinatra-1.3.2.gem&#8217;</p>
+
+<h1>执行sinatra</h1>
+
+<p><code>ruby web.rb</code></p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'># myapp.rb
+</span><span class='line'>require 'sinatra'
+</span><span class='line'>
+</span><span class='line'>get '/' do
+</span><span class='line'>  'Hello world!'
+</span><span class='line'>end</span></code></pre></td></tr></table></div></figure>
+
+
+<p>在浏览器上打<code>http://10.86.34.5:4567/</code>即可看见hello world</p>
+
+<p>内存占用:  <code>1838 root     19888 S    ruby web.rb</code> 差不多20m</p>
+
+<p>后续研究sinatra如何和linux进程通信</p>
+
+<h1>使base文件系统支持wlan</h1>
+
+<p>angstrom使用的是debian的rc. 学习了一通&#8230;</p>
+<p><a rel="bookmark" href="http://jinleileiking.github.com/2012/07/05/am355xboard/">&#9875; Permalink</a></p>]]></content>
+    </entry>
+  
+    <entry>
+      
+
+
+
+
+<title type="html"><![CDATA[2012展望]]></title>
+<link href="http://jinleileiking.github.com/2012/06/08/planof2012/"/>
+<updated>2012-06-08T23:22:00+08:00</updated>
+<id>http://jinleileiking.github.com/2012/06/08/planof2012</id>
+
+      <content type="html"><![CDATA[<h3>参与开源软件</h3>
+
+<ul>
+<li>redis</li>
+<li>ruby</li>
+<li>lua</li>
+<li>rails / sinatra</li>
+<li>ruboto &#8212; jruby sucks!</li>
+</ul>
+
+
+<h3>不玩游戏了</h3>
+
+<ul>
+<li>可能么？</li>
+</ul>
+
+
+<h3>emacs</h3>
+
+<ul>
+<li>这个。。可以没有</li>
+</ul>
+
+
+<h3>读那几本重头书。</h3>
+
+<ul>
+<li>这个要完成！</li>
+</ul>
+
+
+<h3>学学儿科, 发展心理学</h3>
+
+<ul>
+<li>一切为了孩子</li>
+</ul>
+
+<p><a rel="bookmark" href="http://jinleileiking.github.com/2012/06/08/planof2012/">&#9875; Permalink</a></p>]]></content>
+    </entry>
+  
+    <entry>
+      
+
+
+
+
+<title type="html"><![CDATA[hello_octopress]]></title>
+<link href="http://jinleileiking.github.com/2012/06/08/hello-octopress/"/>
+<updated>2012-06-08T23:22:00+08:00</updated>
+<id>http://jinleileiking.github.com/2012/06/08/hello-octopress</id>
+
+      <content type="html"><![CDATA[<p>hello what the fuck!!!</p>
+<p><a rel="bookmark" href="http://jinleileiking.github.com/2012/06/08/hello-octopress/">&#9875; Permalink</a></p>]]></content>
+    </entry>
+  
+    <entry>
+      
+
+
+
+
+<title type="html"><![CDATA[lua]]></title>
+<link href="http://jinleileiking.github.com/2012/03/27/lua/"/>
+<updated>2012-03-27T00:00:00+08:00</updated>
+<id>http://jinleileiking.github.com/2012/03/27/lua</id>
+
+      <content type="html"><![CDATA[<p>今天读完了lua的简单代码，对编译器有了一个初步的认识。下一步看看awesome，然后就看ruby代码了。哈哈</p>
+<p><a rel="bookmark" href="http://jinleileiking.github.com/2012/03/27/lua/">&#9875; Permalink</a></p>]]></content>
+    </entry>
+  
+    <entry>
+      
+
+
+
+
+<title type="html"><![CDATA[rabbithole影评]]></title>
+<link href="http://jinleileiking.github.com/2012/02/10/rabbithole/"/>
+<updated>2012-02-10T00:00:00+08:00</updated>
+<id>http://jinleileiking.github.com/2012/02/10/rabbithole</id>
+
+      <content type="html"><![CDATA[<p>这个片子起初看觉得很乏味，但越向后看就越觉得有深度，很真实。
+很多现象都能从心理学得到解释，我是初学，瞎写写。
+这片子我觉得可以作为心理学教材了。</p>
+
+<h3>参加倾诉会</h3>
+
+<p>个人认为不会有用，因为天天听悲诉只能加剧内心的痛苦。这个和你天天听阴沉的音乐，天天不高兴的道理是一样的。心理学有讲。</p>
+
+<h3>归因</h3>
+
+<p>此片是对归因的完美解释。</p>
+
+<ul>
+<li>男主角将错误归因到小男孩上。属于归于外。发泄方式：倾诉会。</li>
+<li>女主角感觉有点归于内，开始无从移情，所以乱发脾气，后移情小男孩，后移情平行世界。</li>
+<li>小男孩归因于自己，移情于平行世界。</li>
+</ul>
+
+
+<p>需要提及的一点是：悲伤是无论如何也会被宣泄的，所以忍不是办法，找个方法把。无神论者，很容易崩溃。坐坐善事我觉得是一种比较好的移情方式。
+还有一点是：FAE 基本归因错误，当出事时，人总是进行错误归因，把错误归于他人，或自己。本片实际是一起意外。各个人都进行了各自的归因。</p>
+
+<h3>看这个片子时，我在沙发上，不到两个月的女儿趴在我的肩上，睡着。偶尔发出“咯咯”的笑声时，我眼眶湿润了，真的希望她一生平安。</h3>
+<p><a rel="bookmark" href="http://jinleileiking.github.com/2012/02/10/rabbithole/">&#9875; Permalink</a></p>]]></content>
+    </entry>
+  
+    <entry>
+      
+
+
+
+
+<title type="html"><![CDATA[爸爸的可爱Baby日记]]></title>
+<link href="http://jinleileiking.github.com/2011/12/23/baby/"/>
+<updated>2011-12-23T00:00:00+08:00</updated>
+<id>http://jinleileiking.github.com/2011/12/23/baby</id>
+
+      <content type="html"><![CDATA[<h3>2011-12-14 Day 1</h3>
+
+<p>今天你从妈妈的肚子里出来了，你的眼睛真漂亮啊，刚出来就看着粑粑，虽然我们只见面了几分钟，但是这几分钟我印象深刻
+你看了几眼爸爸，然后就将眼转到别的地方去了，是害羞了么？你还要在婴儿室呆几天，这些日子粑粑是多么担心你啊。</p>
+
+<h3>2011-12-23 Day 10</h3>
+
+<p>最近几天你老是晚上有精神，白天呼呼睡大觉。是不是诚心折腾巴巴妈妈啊。你妈妈还在作月子，不要折腾你麻麻了。你已经学会了
+用小手抓奶瓶了，真聪明。早上给你听音乐，你的小脑袋还摇晃，喜欢啊。哈哈</p>
+
+<h3>2012-01-02 Day ?</h3>
+
+<p>今天你笑的时候发出咯咯的声音，把爸爸逗乐了。小丫头越来越漂亮了，越来越像我了，以后不要老折腾啊。
+长大后，要像你爸爸，多读书，多掌握知识，别像你妈妈，不爱读书啊。</p>
+
+<h3>??-??-?? ??</h3>
+
+<p>出疹子了,</p>
+
+<h3>2012-08-05 Month 7</h3>
+
+<p>这周回家礼拜六9点睡着了, 睡了一会你又醒了, 然后就闹闹, 不睡啊&#8230;  爸爸把你放在爸爸肚子上,让你向床上扑啊.. 那个爽啊
+十二点也不睡,后来必须要抱着你, 你坐着都不乐意, 哭, 后来爸爸怕了, 抱着你半天你睡着了, 宝宝千万别得病啊&#8230;爸爸爱你.
+这周你学会再见了,晃着小手</p>
+
+<p><img src="http://jinleileiking.github.com/pic/laugh.jpg" title="童童的笑容" alt="童童的笑容" /></p>
+
+<h1>以后给你看这些:</h1>
+
+<ul>
+<li>朵拉</li>
+<li>米奇妙妙屋</li>
+<li>天线宝宝</li>
+<li>巴布工程师</li>
+<li>花园宝宝</li>
+<li>巧虎</li>
+</ul>
+
+<p><a rel="bookmark" href="http://jinleileiking.github.com/2011/12/23/baby/">&#9875; Permalink</a></p>]]></content>
+    </entry>
+  
+    <entry>
+      
+
+
+
+
+<title type="html"><![CDATA[linux记录]]></title>
+<link href="http://jinleileiking.github.com/2011/11/28/linux/"/>
+<updated>2011-11-28T00:00:00+08:00</updated>
+<id>http://jinleileiking.github.com/2011/11/28/linux</id>
+
+      <content type="html"><![CDATA[<h1>问题</h1>
+
+<ul>
+<li>xfce的图标快捷方式的proxy不能用.zshrc的，需要在.xinitrc中定义。狗血。。。</li>
+<li>wget只改singleuser是否可以?</li>
+</ul>
+
+
+<h1>常用命令</h1>
+
+<ul>
+<li>usermod -a -G ftp tony</li>
+</ul>
+
+
+<h1>samba</h1>
+
+<p><code>sudo mount //localhost/public /mnt/tmp -o users=jinleileiking</code>, <code>/etc/samba/smb.conf</code>中的public会变成public</p>
+
+<h1>让terminator不滚动</h1>
+
+<p>取消<code>scroll on output</code></p>
+
+<h1>sshd &amp; mount</h1>
+
+<p>把<code>sshd_config</code>一定submodule用 internal-sftp. 就好使了.</p>
+
+<p>It&#8217;s ChrootDirectory ownership problem, sshd will reject sftp connections to accounts that are set to chroot into any directory that has ownership/permissions that sshd doesn&#8217;t consider secure. sshd&#8217;s apparently strict ownership/permissions requirements dictate that every directory in the chroot path must be owned by root and only writable for the owner. So, for example, if the chroot environment is in a user&#8217;s home directory both /home and /home/username must be owned by root and have permissions along the lines of 755 or 750 ( group ownership should allow user to access ).</p>
+
+<p><code>sudo mount -t ntfs -o uid=0,gid=1002,umask=0022 /dev/sda5 /home/ssh/base</code></p>
+
+<p>好长时间不好使, 我把<code>/etc/fstab</code>去掉自动mount, 我自动mount是<code>rw的</code>,就好使了</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>sudo mount -t ntfs -o uid=0,gid=100,umask=0022 /dev/sda5 /mnt/share
+</span><span class='line'>sudo mount --bind -o uid=0,gid=100,umask=0022 /mnt/share/movie /home/ssh/base</span></code></pre></td></tr></table></div></figure>
+
+
+<h1>cdrom 相关</h1>
+
+<ul>
+<li>没有/dev/cdrom:</li>
+</ul>
+
+
+<p><code>rm /etc/udev/rules.d/70-persistent-cd.rules</code></p>
+
+<ul>
+<li>mount 显示 no media</li>
+</ul>
+
+
+<p>把盘放进去就可以了&#8230;!! 怎么打开? <code>eject /dev/cdrom</code></p>
+
+<p><code>sudo mount -t iso9660 /dev/cdrom /mnt/tmp</code></p>
+
+<ul>
+<li>cdrom -> iso</li>
+</ul>
+
+
+<p><code>dd if=/dev/cdrom of=./1.iso</code></p>
+
+<h1>设置时间</h1>
+
+<ul>
+<li>设置硬件时间clock &#8211;set &#8211;date=&#8221;07/05/12 11:22&#8221;</li>
+<li>硬件时间 同步到 系统时间 sudo hwclock &#8211;hctosys</li>
+</ul>
+
+
+<h1>free 缓存</h1>
+
+<ul>
+<li><code>echo 3 &gt; /proc/sys/vm/drop_caches</code> # free ..</li>
+</ul>
+
+
+<h1>windows时间和linux时间不一致.</h1>
+
+<ul>
+<li>gentoo 用的是utc时间, windows用的local</li>
+<li>gentoo 改</li>
+</ul>
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>/etc/conf.d/hwclock 
+</span><span class='line'>"UTC" -&gt; "local"
+</span><span class='line'>/etc/init.d/hwclock restart</span></code></pre></td></tr></table></div></figure>
+
+
+<h1>vbox</h1>
+
+<ul>
+<li><p>vbox ctrl+cv 原因是没有加入vbox组</p></li>
+<li><p>扩大vbox分区:</p></li>
+</ul>
+
+
+<p>VBoxManage modifyhd xxx.vdi &#8211;resize 40000</p>
+
+<p>用gentoodisk启动</p>
+
+<p>fdisk 改分区大小</p>
+
+<p>resize2fs&#8230;. done&#8230; so easy</p>
+
+<p>linux访问共享的win文件夹</p>
+
+<ul>
+<li>sudo mount -t vboxsf d_drive /mnt/win7, 犯了个错误，vboxfs&#8230;..</li>
+</ul>
+
+
+<h1>nfs</h1>
+
+<p>/etc/init.d/rpcbind start
+ip 地址别错了..
+mount -v  -t nfs 192.168.1.102:/c/Codes /mnt/tmp
+如果显示超时,关闭windows防火墙,fuck!!!</p>
+
+<h1>查找大文件夹</h1>
+
+<p><code>du -s * | sort -nr | head</code></p>
+
+<h1>安装haskell的pandoc</h1>
+
+<p>首先编译遇到内存溢出问题, 是ghc7.4.1以前有bug,用7.4.1能编过.</p>
+
+<p>然后遇到说network依赖的ghc版本不对的问题,pasace 用3 network用2. 这个执行haskell-updater, unmask安装不成功的package就可以.</p>
+
+<p>然后遇到latex问题,报错,装了texlive-fontsrecommands也不好使.中文乱码.</p>
+
+<p>然后原来需要xelex, 且指定中文名.</p>
+
+<p><code>pandoc  srs.md -o srs.pdf --latex-engine=xelatex -V mainfont=WenQuanYi\ Micro\ Hei\ Mono</code></p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+<span class='line-number'>88</span>
+<span class='line-number'>89</span>
+<span class='line-number'>90</span>
+<span class='line-number'>91</span>
+<span class='line-number'>92</span>
+<span class='line-number'>93</span>
+<span class='line-number'>94</span>
+<span class='line-number'>95</span>
+<span class='line-number'>96</span>
+<span class='line-number'>97</span>
+<span class='line-number'>98</span>
+<span class='line-number'>99</span>
+<span class='line-number'>100</span>
+<span class='line-number'>101</span>
+<span class='line-number'>102</span>
+<span class='line-number'>103</span>
+<span class='line-number'>104</span>
+<span class='line-number'>105</span>
+<span class='line-number'>106</span>
+<span class='line-number'>107</span>
+<span class='line-number'>108</span>
+<span class='line-number'>109</span>
+<span class='line-number'>110</span>
+<span class='line-number'>111</span>
+<span class='line-number'>112</span>
+<span class='line-number'>113</span>
+<span class='line-number'>114</span>
+<span class='line-number'>115</span>
+<span class='line-number'>116</span>
+<span class='line-number'>117</span>
+<span class='line-number'>118</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>➜  r2000 git:(master) ✗ eix ghc -I       
+</span><span class='line'>[I] dev-lang/ghc
+</span><span class='line'>     Available versions:  (~)6.10.4-r1 6.12.3 6.12.3-r2 (~)7.0.4 (~)7.4.1 (~)7.4.1-r1 {bash-completion binary doc ghcbootstrap llvm}
+</span><span class='line'>     Installed versions:  7.4.1-r1(10:52:48 PM 07/29/2012)(-binary -doc -ghcbootstrap -llvm)
+</span><span class='line'>     Homepage:            http://www.haskell.org/ghc/
+</span><span class='line'>     Description:         The Glasgow Haskell Compiler
+</span><span class='line'>
+</span><span class='line'>➜  r2000 git:(master) ✗ eix pandoc -I
+</span><span class='line'>[I] app-text/pandoc
+</span><span class='line'>     Available versions:  (~)1.8.1.1-r1!t ~1.9.1.2 ~1.9.2 ~1.9.3 (~)1.9.4.1-r2!t {doc highlight hscolour pdf profile test}
+</span><span class='line'>     Installed versions:  1.9.4.1-r2!t(05:04:51 PM 08/01/2012)(-doc -hscolour -profile -test)
+</span><span class='line'>     Homepage:            http://johnmacfarlane.net/pandoc
+</span><span class='line'>     Description:         Conversion between markup formats
+</span><span class='line'>
+</span><span class='line'>[D] dev-haskell/pandoc-types
+</span><span class='line'>     Available versions:  (~)1.8 ~1.9.1 {doc hscolour profile}
+</span><span class='line'>     Installed versions:  1.9.1(10:39:31 AM 07/30/2012)(-doc -hscolour -profile)
+</span><span class='line'>     Homepage:            http://johnmacfarlane.net/pandoc
+</span><span class='line'>     Description:         Types for representing a structured document
+</span><span class='line'>
+</span><span class='line'>Found 2 matches.
+</span><span class='line'>➜  r2000 git:(master) ✗ eix texlive -I
+</span><span class='line'>[I] app-text/texlive-core
+</span><span class='line'>     Available versions:  2011-r6 ~2011-r7 ~2012 {X cjk doc source tk xetex}
+</span><span class='line'>     Installed versions:  2011-r6(09:18:07 PM 08/01/2012)(X xetex -cjk -doc -source -tk)
+</span><span class='line'>     Homepage:            http://tug.org/texlive/
+</span><span class='line'>     Description:         A complete TeX distribution
+</span><span class='line'>
+</span><span class='line'>[I] dev-texlive/texlive-basic
+</span><span class='line'>     Available versions:  2011-r1 ~2012 {doc source}
+</span><span class='line'>     Installed versions:  2011-r1(04:03:02 PM 07/27/2012)(-doc -source)
+</span><span class='line'>     Homepage:            http://www.tug.org/texlive/
+</span><span class='line'>     Description:         TeXLive Essential programs and files
+</span><span class='line'>
+</span><span class='line'>[I] dev-texlive/texlive-documentation-base
+</span><span class='line'>     Available versions:  2011 ~2012 {source}
+</span><span class='line'>     Installed versions:  2011(04:02:41 PM 07/27/2012)(-source)
+</span><span class='line'>     Homepage:            http://www.tug.org/texlive/
+</span><span class='line'>     Description:         TeXLive TeX Live documentation
+</span><span class='line'>
+</span><span class='line'>[I] dev-texlive/texlive-fontsrecommended
+</span><span class='line'>     Available versions:  2011 ~2012 {doc source}
+</span><span class='line'>     Installed versions:  2011(06:19:48 PM 08/01/2012)(-doc -source)
+</span><span class='line'>     Homepage:            http://www.tug.org/texlive/
+</span><span class='line'>     Description:         TeXLive Recommended fonts
+</span><span class='line'>
+</span><span class='line'>[I] dev-texlive/texlive-fontutils
+</span><span class='line'>     Available versions:  2011 ~2012 {doc source}
+</span><span class='line'>     Installed versions:  2011(04:03:12 PM 07/27/2012)(-doc -source)
+</span><span class='line'>     Homepage:            http://www.tug.org/texlive/
+</span><span class='line'>     Description:         TeXLive Graphics and font utilities
+</span><span class='line'>
+</span><span class='line'>[I] dev-texlive/texlive-genericrecommended
+</span><span class='line'>     Available versions:  2011 ~2012 {doc source}
+</span><span class='line'>     Installed versions:  2011(09:18:18 PM 08/01/2012)(-doc -source)
+</span><span class='line'>     Homepage:            http://www.tug.org/texlive/
+</span><span class='line'>     Description:         TeXLive Recommended generic packages
+</span><span class='line'>
+</span><span class='line'>[I] dev-texlive/texlive-latex
+</span><span class='line'>     Available versions:  2011 ~2012 {doc source}
+</span><span class='line'>     Installed versions:  2011(04:03:28 PM 07/27/2012)(-doc -source)
+</span><span class='line'>     Homepage:            http://www.tug.org/texlive/
+</span><span class='line'>     Description:         TeXLive Basic LaTeX packages
+</span><span class='line'>
+</span><span class='line'>[I] dev-texlive/texlive-latexextra
+</span><span class='line'>     Available versions:  2011-r2 ~2012 {doc source}
+</span><span class='line'>     Installed versions:  2011-r2(09:30:40 PM 08/01/2012)(-doc -source)
+</span><span class='line'>     Homepage:            http://www.tug.org/texlive/
+</span><span class='line'>     Description:         TeXLive LaTeX supplementary packages
+</span><span class='line'>
+</span><span class='line'>[I] dev-texlive/texlive-latexrecommended
+</span><span class='line'>     Available versions:  2011 ~2012 {doc source}
+</span><span class='line'>     Installed versions:  2011(04:03:53 PM 07/27/2012)(-doc -source)
+</span><span class='line'>     Homepage:            http://www.tug.org/texlive/
+</span><span class='line'>     Description:         TeXLive LaTeX recommended packages
+</span><span class='line'>
+</span><span class='line'>[I] dev-texlive/texlive-mathextra
+</span><span class='line'>     Available versions:  2011 ~2012 ~2012-r1 {doc source}
+</span><span class='line'>     Installed versions:  2011(09:18:26 PM 08/01/2012)(-doc -source)
+</span><span class='line'>     Homepage:            http://www.tug.org/texlive/
+</span><span class='line'>     Description:         TeXLive Advanced math typesetting
+</span><span class='line'>
+</span><span class='line'>[I] dev-texlive/texlive-pictures
+</span><span class='line'>     Available versions:  2011 ~2011-r1 ~2012 {doc source}
+</span><span class='line'>     Installed versions:  2011(09:18:40 PM 08/01/2012)(-doc -source)
+</span><span class='line'>     Homepage:            http://www.tug.org/texlive/
+</span><span class='line'>     Description:         TeXLive Graphics packages and programs
+</span><span class='line'>
+</span><span class='line'>[I] dev-texlive/texlive-xetex
+</span><span class='line'>     Available versions:  2011 ~2012 {X doc source}
+</span><span class='line'>     Installed versions:  2011(09:30:55 PM 08/01/2012)(X -doc -source)
+</span><span class='line'>     Homepage:            http://www.tug.org/texlive/
+</span><span class='line'>     Description:         TeXLive XeTeX packages
+</span><span class='line'>
+</span><span class='line'>Found 12 matches.
+</span><span class='line'>➜  r2000 git:(master) ✗ eix latex -I
+</span><span class='line'>[I] dev-texlive/texlive-latex
+</span><span class='line'>     Available versions:  2011 ~2012 {doc source}
+</span><span class='line'>     Installed versions:  2011(04:03:28 PM 07/27/2012)(-doc -source)
+</span><span class='line'>     Homepage:            http://www.tug.org/texlive/
+</span><span class='line'>     Description:         TeXLive Basic LaTeX packages
+</span><span class='line'>
+</span><span class='line'>[I] dev-texlive/texlive-latexextra
+</span><span class='line'>     Available versions:  2011-r2 ~2012 {doc source}
+</span><span class='line'>     Installed versions:  2011-r2(09:30:40 PM 08/01/2012)(-doc -source)
+</span><span class='line'>     Homepage:            http://www.tug.org/texlive/
+</span><span class='line'>     Description:         TeXLive LaTeX supplementary packages
+</span><span class='line'>
+</span><span class='line'>[I] dev-texlive/texlive-latexrecommended
+</span><span class='line'>     Available versions:  2011 ~2012 {doc source}
+</span><span class='line'>     Installed versions:  2011(04:03:53 PM 07/27/2012)(-doc -source)
+</span><span class='line'>     Homepage:            http://www.tug.org/texlive/
+</span><span class='line'>     Description:         TeXLive LaTeX recommended packages
+</span><span class='line'>
+</span><span class='line'>[I] virtual/latex-base
+</span><span class='line'>     Available versions:  1.0
+</span><span class='line'>     Installed versions:  1.0(04:03:58 PM 07/27/2012)
+</span><span class='line'>     Description:         Virtual for basic LaTeX bin</span></code></pre></td></tr></table></div></figure>
+
+
+<h1>startx 显示 no proctol specified</h1>
+
+<p>删去.Xauth<em> 和.servauth.</em></p>
+
+<h1>批量改扩展名</h1>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>find . -type f -name '*.JPG' -exec rename 'JPG' 'jpg' {} \;</span></code></pre></td></tr></table></div></figure>
+
+
+<h1>awesome支持polkit,consolekit</h1>
+
+<p>If you want to use the awesome menu to let your computer restart/shutdown/hibernate/suspend, You should do this:</p>
+
+<p>gentoo:</p>
+
+<ul>
+<li>You MUST emerge with use +polkit +pam :</li>
+</ul>
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>➜  ~ git:(master) ✗ epv dbus dbus-glib pambase shadow  upower polkit awesome consolekit
+</span><span class='line'>zsh: correct 'dbus' to '.dbus' [nyae]? n
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>These are the packages that would be merged, in order:
+</span><span class='line'>
+</span><span class='line'>Calculating dependencies... done!
+</span><span class='line'>[ebuild   R    ] sys-apps/dbus-1.4.20  USE="X -debug -doc (-selinux) -static-libs -test" 0 kB
+</span><span class='line'>[ebuild   R    ] dev-libs/dbus-glib-0.98  USE="-debug -doc -static-libs -test" 0 kB
+</span><span class='line'>[ebuild   R    ] x11-wm/awesome-3.4.11  USE="dbus -doc" 0 kB
+</span><span class='line'>[ebuild   R    ] sys-auth/polkit-0.104-r1  USE="gtk introspection nls pam -debug -doc -examples -kde (-selinux) (-systemd)" 0 kB
+</span><span class='line'>[ebuild   R    ] sys-auth/consolekit-0.4.5_p20120320  USE="acl pam policykit -debug -doc (-selinux) -test" 0 kB
+</span><span class='line'>[ebuild   R    ] sys-power/upower-0.9.16  USE="introspection -debug -doc -ios" 0 kB
+</span><span class='line'>[ebuild   R    ] sys-auth/pambase-20101024-r2  USE="consolekit cracklib sha512 -debug -gnome-keyring -minimal -mktemp -pam_krb5 -pam_ssh -passwdqc (-selinux)" 0 kB
+</span><span class='line'>[ebuild   R    ] sys-apps/shadow-4.1.4.3  USE="cracklib nls pam -audit (-selinux) -skey" 1,762 kB
+</span><span class='line'>
+</span><span class='line'>Total: 8 packages (8 reinstalls), Size of downloads: 1,762 kB</span></code></pre></td></tr></table></div></figure>
+
+
+<ul>
+<li>kernel MUST enable:</li>
+</ul>
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>➜  ~ git:(master) ✗  grep audit -i  /usr/src/linux/.config  
+</span><span class='line'>CONFIG_AUDIT_ARCH=y
+</span><span class='line'>CONFIG_AUDIT=y
+</span><span class='line'>CONFIG_AUDITSYSCALL=y
+</span><span class='line'>CONFIG_AUDIT_WATCH=y
+</span><span class='line'>CONFIG_AUDIT_TREE=y</span></code></pre></td></tr></table></div></figure>
+
+
+<ul>
+<li>.xinitrc MUST have:</li>
+</ul>
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>exec ck-launch-session dbus-launch --sh-syntax --exit-with-session awesome &gt;&gt; ~/.awesome_stdout 2&gt;&gt; ~/.awesome_stderr</span></code></pre></td></tr></table></div></figure>
+
+
+<ul>
+<li>dbus, consolekit MUST start:</li>
+</ul>
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>➜  ~ git:(master) ✗ rc-update
+</span><span class='line'>                  
+</span><span class='line'>           consolekit |      default                   
+</span><span class='line'>                 dbus |      default                 </span></code></pre></td></tr></table></div></figure>
+
+
+<ul>
+<li>following the ARCH bash style do the auto login, here is my zsh config:</li>
+</ul>
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>➜  ~ git:(master) ✗ cat /etc/inittab 
+</span><span class='line'>#
+</span><span class='line'># /etc/inittab:  This file describes how the INIT process should set up
+</span><span class='line'>#                the system in a certain run-level.
+</span><span class='line'>#
+</span><span class='line'># Author:  Miquel van Smoorenburg, &lt;miquels@cistron.nl&gt;
+</span><span class='line'># Modified by:  Patrick J. Volkerding, &lt;volkerdi@ftp.cdrom.com&gt;
+</span><span class='line'># Modified by:  Daniel Robbins, &lt;drobbins@gentoo.org&gt;
+</span><span class='line'># Modified by:  Martin Schlemmer, &lt;azarah@gentoo.org&gt;
+</span><span class='line'># Modified by:  Mike Frysinger, &lt;vapier@gentoo.org&gt;
+</span><span class='line'># Modified by:  Robin H. Johnson, &lt;robbat2@gentoo.org&gt;
+</span><span class='line'>#
+</span><span class='line'># $Header: /var/cvsroot/gentoo-x86/sys-apps/sysvinit/files/inittab-2.87,v 1.1 2010/01/08 16:55:07 williamh Exp $
+</span><span class='line'>
+</span><span class='line'># Default runlevel.
+</span><span class='line'>id:3:initdefault:
+</span><span class='line'>
+</span><span class='line'># System initialization, mount local filesystems, etc.
+</span><span class='line'>si::sysinit:/sbin/rc sysinit
+</span><span class='line'>
+</span><span class='line'># Further system initialization, brings up the boot runlevel.
+</span><span class='line'>rc::bootwait:/sbin/rc boot
+</span><span class='line'>
+</span><span class='line'>l0:0:wait:/sbin/rc shutdown 
+</span><span class='line'>l0s:0:wait:/sbin/halt -dhp
+</span><span class='line'>l1:1:wait:/sbin/rc single
+</span><span class='line'>l2:2:wait:/sbin/rc nonetwork
+</span><span class='line'>l3:3:wait:/sbin/rc default
+</span><span class='line'>l4:4:wait:/sbin/rc default
+</span><span class='line'>l5:5:wait:/sbin/rc default
+</span><span class='line'>l6:6:wait:/sbin/rc reboot
+</span><span class='line'>l6r:6:wait:/sbin/reboot -dk
+</span><span class='line'>#z6:6:respawn:/sbin/sulogin
+</span><span class='line'>
+</span><span class='line'># new-style single-user
+</span><span class='line'>su0:S:wait:/sbin/rc single
+</span><span class='line'>su1:S:wait:/sbin/sulogin
+</span><span class='line'>
+</span><span class='line'># TERMINALS
+</span><span class='line'>#c1:12345:respawn:/sbin/agetty 38400 tty1 linux
+</span><span class='line'>c1:5:respawn:/sbin/agetty  -a jinleileiking -8 -s 38400 tty1 linux
+</span><span class='line'>c2:2345:respawn:/sbin/agetty 38400 tty2 linux
+</span><span class='line'>c3:2345:respawn:/sbin/agetty 38400 tty3 linux
+</span><span class='line'>c4:2345:respawn:/sbin/agetty 38400 tty4 linux
+</span><span class='line'>c5:2345:respawn:/sbin/agetty 38400 tty5 linux
+</span><span class='line'>c6:2345:respawn:/sbin/agetty 38400 tty6 linux
+</span><span class='line'>
+</span><span class='line'># SERIAL CONSOLES
+</span><span class='line'>#s0:12345:respawn:/sbin/agetty 9600 ttyS0 vt100
+</span><span class='line'>#s1:12345:respawn:/sbin/agetty 9600 ttyS1 vt100
+</span><span class='line'>
+</span><span class='line'># What to do at the "Three Finger Salute".
+</span><span class='line'>ca:12345:ctrlaltdel:/sbin/shutdown -r now
+</span><span class='line'>
+</span><span class='line'># Used by /etc/init.d/xdm to control DM startup.
+</span><span class='line'># Read the comments in /etc/init.d/xdm for more
+</span><span class='line'># info. Do NOT remove, as this will start nothing
+</span><span class='line'># extra at boot if /etc/init.d/xdm is not added
+</span><span class='line'># to the "default" runlevel.
+</span><span class='line'>x:a:once:/etc/X11/startDM.sh
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>➜  ~ git:(master) ✗ cat .zprofile
+</span><span class='line'>
+</span><span class='line'># New environment setting added by Sourcery CodeBench Lite for ARM EABI on Thu Jul 05 17:04:19 CST 2012 1.
+</span><span class='line'># The unmodified version of this file is saved in /home/jinleileiking/.zprofile2131715756.
+</span><span class='line'># Do NOT modify these lines; they are used to uninstall.
+</span><span class='line'>PATH="/home/jinleileiking/crosstools/CodeSourcery/Sourcery_CodeBench_Lite_for_ARM_EABI/bin:${PATH}"
+</span><span class='line'>export PATH
+</span><span class='line'># End comments by InstallAnywhere on Thu Jul 05 17:04:19 CST 2012 1.
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>if [[ -z $DISPLAY ]] && [[ $(tty) = /dev/tty1 ]]; then
+</span><span class='line'>  #exec startx -- vt01
+</span><span class='line'>  exec startx 
+</span><span class='line'>  # Could use xinit instead of startx
+</span><span class='line'>  #exec xinit -- /usr/bin/X -nolisten tcp vt7
+</span><span class='line'>fi</span></code></pre></td></tr></table></div></figure>
+
+
+<ul>
+<li>Modify your rc.lua:</li>
+</ul>
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>local upower = [[dbus-send --print-reply \
+</span><span class='line'>--system \
+</span><span class='line'>--dest=org.freedesktop.UPower \
+</span><span class='line'>/org/freedesktop/UPower \
+</span><span class='line'>org.freedesktop.UPower.]]
+</span><span class='line'>local consolkit = [[dbus-send --print-reply \
+</span><span class='line'>--system \
+</span><span class='line'>--dest="org.freedesktop.ConsoleKit" \
+</span><span class='line'>/org/freedesktop/ConsoleKit/Manager \
+</span><span class='line'>org.freedesktop.ConsoleKit.Manager.]]
+</span><span class='line'>
+</span><span class='line'>mymainmenu = awful.menu({ items = { { "awesome", myawesomemenu, beautiful.awesome_icon },
+</span><span class='line'>                                    { "terminal", terminal },
+</span><span class='line'>                                    { "chromium", shell_cmd .. "chromium"},
+</span><span class='line'>                                    { "lock", "slock" },
+</span><span class='line'>                                    { "Suspend", function() awful.util.spawn(upower.."Suspend") end },
+</span><span class='line'>                                    { "Hibernate", function () awful.util.spawn(upower.."Hibernate") end },
+</span><span class='line'>                                    { "Restart", consolkit.."Restart", icon_path.."restart.png" },
+</span><span class='line'>                                    { "Shutdown", consolkit.."Stop", icon_path.."poweroff.png" },
+</span><span class='line'>                                  }
+</span><span class='line'>                        })</span></code></pre></td></tr></table></div></figure>
+
+
+
+<p><a rel="bookmark" href="http://jinleileiking.github.com/2011/11/28/linux/">&#9875; Permalink</a></p>]]></content>
+    </entry>
+  
+    <entry>
+      
+
+
+
+
+<title type="html"><![CDATA[git]]></title>
+<link href="http://jinleileiking.github.com/2011/10/18/git/"/>
+<updated>2011-10-18T00:00:00+08:00</updated>
+<id>http://jinleileiking.github.com/2011/10/18/git</id>
+
+      <content type="html"><![CDATA[<ul>
+<li><p>(use &#8220;git rm &#8211;cached <file>&#8230;&#8221; to unstage)</p></li>
+<li><p>目录有东西，如何clone？</p></li>
+</ul>
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>cd 
+</span><span class='line'>git init 
+</span><span class='line'>git remote add origin remote_machine:~brentg/my_setup.git 
+</span><span class='line'>git fetch 
+</span><span class='line'>git branch master origin/master 
+</span><span class='line'>git checkout master </span></code></pre></td></tr></table></div></figure>
+
+
+<h3>git pull http master 后，git log -p -n1 显示不出区别</h3>
+
+<p>git log &#8211;oneline 看commit号, git diff commit号</p>
+
+<h3>git ls-files</h3>
+<p><a rel="bookmark" href="http://jinleileiking.github.com/2011/10/18/git/">&#9875; Permalink</a></p>]]></content>
+    </entry>
+  
+    <entry>
+      
+
+
+
+
+<title type="html"><![CDATA[s3c2410板子上跑ruby]]></title>
+<link href="http://jinleileiking.github.com/2011/07/29/s3c2410/"/>
+<updated>2011-07-29T00:00:00+08:00</updated>
+<id>http://jinleileiking.github.com/2011/07/29/s3c2410</id>
+
+      <content type="html"><![CDATA[<ul>
+<li><p>tool-chain
+** armlinux.org: arm-linux-gcc 2.95.0: cpp0: 只能放在usr/local</p></li>
+<li><p>busybox
+** make DOSTATIC=true TARGET_ARCH=arm CROSS=arm-linux- PREFIX=../root_china all install</p></li>
+<li><p>vivi
+<strong> net tftp 10.87.42.26 0x30008000 root_china.cramfs
+</strong> net flash root</p></li>
+<li><p>compile ruby 192</p></li>
+</ul>
+
+
+<p><code>env ac_cv_func_setpgrp_void=yes ./configure --host=arm-linux --target=arm-linux --disable-pthread --enable-shared --prefix=/home/jinleileiking/tools/embeded/ruby192</code></p>
+
+<ul>
+<li>chown -R  root:root *</li>
+</ul>
+
+<p><a rel="bookmark" href="http://jinleileiking.github.com/2011/07/29/s3c2410/">&#9875; Permalink</a></p>]]></content>
+    </entry>
+  
+    <entry>
+      
+
+
+
+
+<title type="html"><![CDATA[vim遇到的问题]]></title>
+<link href="http://jinleileiking.github.com/2011/06/27/vim/"/>
+<updated>2011-06-27T00:00:00+08:00</updated>
+<id>http://jinleileiking.github.com/2011/06/27/vim</id>
+
+      <content type="html"><![CDATA[<ul>
+<li><p>ack
+** -a, &#8211;all-types       All file types searched;</p></li>
+<li><p>有几个插件和输入法冲突: acp, autoclose, delimate</p></li>
+<li>cscope</li>
+</ul>
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>!cscope -Rbq
+</span><span class='line'>:cscope add cscope.out
+</span><span class='line'>:cs find 3 &lt;C-R&gt;&lt;C-W&gt;
+</span><span class='line'>遇到cscope add 不成功的问题，：目录不能有空格。。。。</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Plugins</h3>
+
+<h4>ack</h4>
+
+<ul>
+<li>:Ack &#8216;Item\d&#8217; # 这样好使。。。。。</li>
+</ul>
+
+
+<h4>todo</h4>
+
+<ul>
+<li>怎么让不好使的插件支持中文输入法</li>
+<li>vimim</li>
+<li>vundle</li>
+</ul>
+
+<p><a rel="bookmark" href="http://jinleileiking.github.com/2011/06/27/vim/">&#9875; Permalink</a></p>]]></content>
+    </entry>
+  
+    <entry>
+      
+
+
+
+
+<title type="html"><![CDATA[sinatra source code hacking]]></title>
+<link href="http://jinleileiking.github.com/2011/06/27/sinatra/"/>
+<updated>2011-06-27T00:00:00+08:00</updated>
+<id>http://jinleileiking.github.com/2011/06/27/sinatra</id>
+
+      <content type="html"><![CDATA[<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>Application.run!
+</span><span class='line'>  detect_rack_handler # select the first (webrick, thin, or ....)
+</span><span class='line'>  handler.run self # Rack run ...
+</span><span class='line'>  #......
+</span><span class='line'>  # when http requested
+</span><span class='line'>  Base.call ##　？？？？
+</span><span class='line'>    synchronize { prototype.call(env) }
+</span><span class='line'>       new
+</span><span class='line'>         build
+</span><span class='line'>            builder.run new!(*args, &bk) ## ????</span></code></pre></td></tr></table></div></figure>
+
+<p><a rel="bookmark" href="http://jinleileiking.github.com/2011/06/27/sinatra/">&#9875; Permalink</a></p>]]></content>
+    </entry>
+  
+    <entry>
+      
+
+
+
+
+<title type="html"><![CDATA[irc]]></title>
+<link href="http://jinleileiking.github.com/2011/06/27/irc/"/>
+<updated>2011-06-27T00:00:00+08:00</updated>
+<id>http://jinleileiking.github.com/2011/06/27/irc</id>
+
+      <content type="html"><![CDATA[<ul>
+<li><code>/msg nickserv identify your_password</code></li>
+<li><code>/msg alis list *cn*</code> 会再新窗口现实cn的channel 没有空格</li>
+<li>&lt; tmr> /unquery, /query or /q to close query, /wc to close window (two different things).16:32 &lt; tmr> Alis replies with notices.</li>
+</ul>
+
+<p><a rel="bookmark" href="http://jinleileiking.github.com/2011/06/27/irc/">&#9875; Permalink</a></p>]]></content>
+    </entry>
+  
+    <entry>
+      
+
+
+
+
+<title type="html"><![CDATA[eclipse 遇到的问题]]></title>
+<link href="http://jinleileiking.github.com/2011/06/27/eclipse/"/>
+<updated>2011-06-27T00:00:00+08:00</updated>
+<id>http://jinleileiking.github.com/2011/06/27/eclipse</id>
+
+      <content type="html"><![CDATA[<ul>
+<li>最开始emerge了eclipse-jdk,这个不好使，然后下了官方网站的3.5.2，出错:Failed to parse arguments: Cannot open display, rm -rf ~/.eclipse搞定，郁闷了半天</li>
+</ul>
+
+<p><a rel="bookmark" href="http://jinleileiking.github.com/2011/06/27/eclipse/">&#9875; Permalink</a></p>]]></content>
+    </entry>
+  
+    <entry>
+      
+
+
+
+
+<title type="html"><![CDATA[车记录]]></title>
+<link href="http://jinleileiking.github.com/2011/06/02/car/"/>
+<updated>2011-06-02T00:00:00+08:00</updated>
+<id>http://jinleileiking.github.com/2011/06/02/car</id>
+
+      <content type="html"><![CDATA[<h3>启动</h3>
+
+<ul>
+<li>踩离合，启动发动机</li>
+<li>松离合，热车</li>
+<li>踩离合，挂档</li>
+<li><p>松手刹，启动</p></li>
+<li><p>减档时，要想使发动机转速与离合器片转速同步，只有靠主动地踩油门提高发动机转速才可能实现，除此之外别无他法。而加档时是被动地等待发动机转速的自然下降。</p></li>
+<li>只有使发动机保持最大扭距才能使燃烧充分延长发动机的使用寿命,我宁可低档高速也决不高档低速运行，这不是省那么一丁点汽油的问题而是损坏了整个变速和传动系统。</li>
+<li>主要是高挡低转速时  发动机负荷很大  ECU为了发动机正常运转   会加大喷油量防止功率不够导致熄火  但是低转速进气量很小  多喷的燃油无法完全燃烧（氧气不够）   就会油耗升高   进排气门  活塞顶部产生积碳   时间一长就明显感到动力不足  油耗爆高  1500转输出最大纽矩的是涡轮发动机     如果都保持在1500转以上行驶就没有拖挡的说法了   因为汽油发动机既经济又健康的行驶转速就局限于1500-3500转     低或高于这个转速油耗都会升高   而且转速低更容易积碳   所以宁愿高转也别低转</li>
+</ul>
+
+<p><a rel="bookmark" href="http://jinleileiking.github.com/2011/06/02/car/">&#9875; Permalink</a></p>]]></content>
+    </entry>
+  
+    <entry>
+      
+
+
+
+
+<title type="html"><![CDATA[gentoo安装记录]]></title>
+<link href="http://jinleileiking.github.com/2011/05/30/gentoo/"/>
+<updated>2011-05-30T00:00:00+08:00</updated>
+<id>http://jinleileiking.github.com/2011/05/30/gentoo</id>
+
+      <content type="html"><![CDATA[<ul>
+<li>revdep-rebuild ibus降级，ibus-sunpinyin不好使。，用这个命令解决了。</li>
+<li>gvim 不能+gnome!!!!!!</li>
+</ul>
+
+
+<h3>真实安装</h3>
+
+<ul>
+<li>内核启动，挂在什么pre.sh : 内核要选DEVTMPFS和CONFIG_DEVTMPFS_MOUNT</li>
+<li>出现了一次 net.eth0这个找不到，稀里糊涂搞好了: ln net.lo -s net.eth0</li>
+<li>下载时，要下载stage3.tar.gz&#8230;否则麻烦</li>
+<li>下了，怎么传到vbox? 用ssh, 开了ssh，用securtcrt 控制vbox,可以粘贴了！</li>
+<li>选择源，163那个mirror可以，sync要用tom的:SYNC=&#8221;rsync://gentoo.tom.com/gentoo-portage&#8221;</li>
+<li>eth0: ln -s net.lo net.eth0</li>
+<li>rc-update add udev dhcpcd net.eth0 sshd default</li>
+<li>kworker high cpu: 重启之后就好了，不知道为什么</li>
+<li>eth0 dhcp</li>
+<li>gnome的menu 添加不了，看不见：用gdm加上就有了</li>
+<li>alsa: 要把device driver改为 module。否则音量控制键没有。&amp;&amp; alsamixer 要把 speaker unmute，纠结了半天。。</li>
+<li>gnome-terminal 设置unicode模式:???: 需要在xdm登入时，选择编码&#8230;&#8230;..LANG=C代表使用ascii..gnome3不能选，在systemsetting里选ch键盘不好使，再反选en_us,ok&#8230;..LANG已经变成en_us</li>
+<li>x : 挂在 no screens found, X -configure挂在no devices to configure: rc-update add udev boot /etc/init.d/udev start 搞了一天</li>
+<li>/dev/fb/62 not found: udev needs start</li>
+<li>mount /dev/sda1 /boot : ext2不支持问题：内核没吧ext2编译进去。用cd重编。。</li>
+<li>emerge是通过wget来获取程序源代码的，所以应该是编辑/etc/wgetrc文件来配置httpxx。具体做法你可以参考这个文件，里边有范例的。</li>
+</ul>
+
+
+<h1>字体</h1>
+
+<ul>
+<li>AR MING xxx 字体找不到: 是freedesktop的,在arphicfont包里&#8230;</li>
+</ul>
+
+
+<h3>others</h3>
+
+<ul>
+<li>lspci : emerge sys-apps/pciutils</li>
+<li>equery可查看已安装包的信息 emerge gentoolkit:  equery l</li>
+</ul>
+
+<p><a rel="bookmark" href="http://jinleileiking.github.com/2011/05/30/gentoo/">&#9875; Permalink</a></p>]]></content>
+    </entry>
+  
+    <entry>
+      
+
+
+
+
+<title type="html"><![CDATA[arch安装记录]]></title>
+<link href="http://jinleileiking.github.com/2011/05/27/arch/"/>
+<updated>2011-05-27T00:00:00+08:00</updated>
+<id>http://jinleileiking.github.com/2011/05/27/arch</id>
+
+      <content type="html"><![CDATA[<h3>问题</h3>
+
+<ul>
+<li>快捷方式以root方式启动</li>
+<li>R61还是有网卡问题，所以不能用minimal装。。。只能用整盘安装</li>
+<li>yaourt 还是会用wget, 使用aria2</li>
+<li>yaourt的proxy</li>
+<li>pacman 的wget的proxy不能共享环境变量，需要在~/.wgetrc中找。。。。</li>
+</ul>
+
+
+<h3>菜单安装</h3>
+
+<ul>
+<li>修改主机名</li>
+<li>添个root密码</li>
+<li>/etc/pacman.d/mirrorslist mirror 选163</li>
+<li>rc.conf 选中dhcp 会自动启动dhcpcd</li>
+<li>reboot</li>
+</ul>
+
+
+<h4>用户建立</h4>
+
+<ul>
+<li>pacman -Syy</li>
+<li>pacman -Syu # 提示说什么locale文件已经存在，删了就OK</li>
+<li>pacman -S xorg-server sudo xfce4 aria2 git openssh virtualbox-archlinux-additions inetutils</li>
+<li>rc.conf 加 vbox-service</li>
+<li>user add -m jinleileiking #一定要用这个建立目录，mkdir是root权限 x起不来</li>
+<li>passwd jinleileiking</li>
+<li>usermod -a jinleileiking -G root,bin,adm,tty,disk,mem,kmem,ftp,mail,uucp,log,utmp,locate,rfkill,smmsp,http,network,floppy,nobody,users,dbus,avahi,camera,usbmux,sys,lp,wheel,games,video,audio,optical,storage,scanner,power,jinleileiking,daemon</li>
+<li>ssh-keygen # 将rsa_pub同步到github</li>
+<li>etc目录同步</li>
+<li>jinleileiking 登录</li>
+<li>ssh-keygen</li>
+<li>.目录同步</li>
+<li>ohmyzsh #clone chsh</li>
+<li>rvm # clone &amp; rvm requiremnt &amp; rvm install 1.9.2 &amp; rvm install 1.8.7 &amp; jruby</li>
+<li>vundle # githbub clone :BundleInstall</li>
+</ul>
+
+
+<p>-### 软件安装-
+-<em> 想直接装X的，但是发现还是得pacman -Syu,一样的，所以以后先SYU一下-
+-</em> 先搞一下手动配置网卡IP，/etc/resolve.conf : nameserver 192.168.1.1-</p>
+
+<p>-<em> pacman-db-upgrade-
+-</em> reboot-</p>
+
+<h3>字体</h3>
+
+<ul>
+<li>pacman -S dejavu?
+-* 下载微米黑，也可以考虑雅黑，中文字体其实就是调整中文字体顺序.fontconf-</li>
+<li>wiki步骤安装yaourt, 就是加个源。</li>
+<li><code>yaourt -S *-lcd</code></li>
+<li>yaourt microhei
+-* Zsh,Sans Zs ns之间有间距：折腾了半天：需要cairo-ubuntu, xft-ubuntu, fontconfig-ubuntu等（鉴于转到gentoo，不细研究了)-</li>
+</ul>
+
+
+<p>-### x-</p>
+
+<p>-### sudo-
+-<em> 添加用户  useradd -m -g users -G audio,lp,optical,storage,video,wheel,games,power,scanner -s /bin/bash jinleileiking-
+-</em> pacman -S sudo-
+-<em> visudo-
+-</em> #%wheel  ALL=(ALL) ALL取消注释-
+-* passwd jinleileiking-</p>
+
+<h3>vbox</h3>
+
+<p>乱搞搞好了，需要按GPL的步骤来
+-<em> mount addition cd.-
+-</em> pacman -S kernel26-headers xorg-server base-devel-
+-# pacman -S xorg-server xorg-xinit xorg-utils xorg-server-utils-
+-# pacman -S mesa-
+-pacman -Ss xf86-video-vesa-
+* sharefolder: sudo mount -t vboxsf tools /mnt
+-* vbox addition装不上： 要按照gpl pacman来取</p>
+
+<p>-### gnome3-</p>
+
+<p>-<em> pacman -S gnome-shell-
+-</em> 按照wiki来，注意要用inittab模式。-
+-<em> gnome3 vbox fallback模式: ln -s /usr/lib/xorg/modules/dri /usr/lib/dri     ln -s /usr/lib/xorg/modules/dri/vboxvideo_dri.so /usr/lib/dri-
+-</em> gnome3 fullmode cpu太高，死机：其实禁用vbox的3d模式就能切换到rollbak-</p>
+
+<p>-### zsh-</p>
+
+<p>-<em> pacman -S zsh-
+-</em> pacman -S git-
+-<em> oh-my-zsh : wget &#8211;no-check-certificate https://github.com/robbyrussell/oh-my-zsh/raw/master/tools/install.sh -O - | sh-
+-</em> inetutils 解决hostname命令找不到的问题-</p>
+
+<h3>others</h3>
+<p><a rel="bookmark" href="http://jinleileiking.github.com/2011/05/27/arch/">&#9875; Permalink</a></p>]]></content>
+    </entry>
+  
+</feed>

@@ -1,0 +1,507 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>童童爸的博客</title>
+  <meta name="author" content="jinleileiking">
+  <meta name="Generator" content="Jekyll & Octopress (http://octopress.org)">
+
+  
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://jinleileiking.github.com/blog/page/3/">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/jquery.min.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="童童爸的博客" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+   
+  <link href="/octopress-favicon.png" rel="icon">
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">童童爸的博客</a></h1>
+  
+    <h2>爱老婆，爱童童，爱编程</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:jinleileiking.github.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">博客</a></li>
+  <li><a href="/archives">文档列表</a></li>
+  <li><a href="/about">关于我</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div class="blog-index">
+  
+    
+
+
+
+
+
+
+
+
+
+
+    <article >
+      
+  <header>
+    <h1 class="entry-title">
+
+<a href="/2011/06/27/sinatra/">Sinatra Source Code Hacking</a>
+
+</h1>
+
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-06-27T00:00:00+08:00" pubdate data-updated="true">Jun 27<span>th</span>, 2011</time>
+         &bull; <a rel="bookmark" href="/2011/06/27/sinatra/">永久链接</a>
+      </p>
+    
+  </header>
+
+<div class="entry-content"><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>Application.run!
+</span><span class='line'>  detect_rack_handler # select the first (webrick, thin, or ....)
+</span><span class='line'>  handler.run self # Rack run ...
+</span><span class='line'>  #......
+</span><span class='line'>  # when http requested
+</span><span class='line'>  Base.call ##　？？？？
+</span><span class='line'>    synchronize { prototype.call(env) }
+</span><span class='line'>       new
+</span><span class='line'>         build
+</span><span class='line'>            builder.run new!(*args, &bk) ## ????</span></code></pre></td></tr></table></div></figure>
+
+</div>
+
+  <footer>
+    
+    <p><a class="comments-link" href="/2011/06/27/sinatra/#disqus_thread">View comments &raquo;</a></p>
+    
+    
+  </footer>
+
+
+    </article>
+  
+    
+
+
+
+
+
+
+
+
+
+
+    <article >
+      
+  <header>
+    <h1 class="entry-title">
+
+<a href="/2011/06/27/irc/">Irc</a>
+
+</h1>
+
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-06-27T00:00:00+08:00" pubdate data-updated="true">Jun 27<span>th</span>, 2011</time>
+         &bull; <a rel="bookmark" href="/2011/06/27/irc/">永久链接</a>
+      </p>
+    
+  </header>
+
+<div class="entry-content"><ul>
+<li><code>/msg nickserv identify your_password</code></li>
+<li><code>/msg alis list *cn*</code> 会再新窗口现实cn的channel 没有空格</li>
+<li>&lt; tmr> /unquery, /query or /q to close query, /wc to close window (two different things).16:32 &lt; tmr> Alis replies with notices.</li>
+</ul>
+
+</div>
+
+  <footer>
+    
+    <p><a class="comments-link" href="/2011/06/27/irc/#disqus_thread">View comments &raquo;</a></p>
+    
+    
+  </footer>
+
+
+    </article>
+  
+    
+
+
+
+
+
+
+
+
+
+
+    <article >
+      
+  <header>
+    <h1 class="entry-title">
+
+<a href="/2011/06/27/eclipse/">Eclipse 遇到的问题</a>
+
+</h1>
+
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-06-27T00:00:00+08:00" pubdate data-updated="true">Jun 27<span>th</span>, 2011</time>
+         &bull; <a rel="bookmark" href="/2011/06/27/eclipse/">永久链接</a>
+      </p>
+    
+  </header>
+
+<div class="entry-content"><ul>
+<li>最开始emerge了eclipse-jdk,这个不好使，然后下了官方网站的3.5.2，出错:Failed to parse arguments: Cannot open display, rm -rf ~/.eclipse搞定，郁闷了半天</li>
+</ul>
+
+</div>
+
+  <footer>
+    
+    <p><a class="comments-link" href="/2011/06/27/eclipse/#disqus_thread">View comments &raquo;</a></p>
+    
+    
+  </footer>
+
+
+    </article>
+  
+    
+
+
+
+
+
+
+
+
+
+
+    <article >
+      
+  <header>
+    <h1 class="entry-title">
+
+<a href="/2011/06/02/car/">车记录</a>
+
+</h1>
+
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-06-02T00:00:00+08:00" pubdate data-updated="true">Jun 2<span>nd</span>, 2011</time>
+         &bull; <a rel="bookmark" href="/2011/06/02/car/">永久链接</a>
+      </p>
+    
+  </header>
+
+<div class="entry-content"><h3>启动</h3>
+
+<ul>
+<li>踩离合，启动发动机</li>
+<li>松离合，热车</li>
+<li>踩离合，挂档</li>
+<li><p>松手刹，启动</p></li>
+<li><p>减档时，要想使发动机转速与离合器片转速同步，只有靠主动地踩油门提高发动机转速才可能实现，除此之外别无他法。而加档时是被动地等待发动机转速的自然下降。</p></li>
+<li>只有使发动机保持最大扭距才能使燃烧充分延长发动机的使用寿命,我宁可低档高速也决不高档低速运行，这不是省那么一丁点汽油的问题而是损坏了整个变速和传动系统。</li>
+<li>主要是高挡低转速时  发动机负荷很大  ECU为了发动机正常运转   会加大喷油量防止功率不够导致熄火  但是低转速进气量很小  多喷的燃油无法完全燃烧（氧气不够）   就会油耗升高   进排气门  活塞顶部产生积碳   时间一长就明显感到动力不足  油耗爆高  1500转输出最大纽矩的是涡轮发动机     如果都保持在1500转以上行驶就没有拖挡的说法了   因为汽油发动机既经济又健康的行驶转速就局限于1500-3500转     低或高于这个转速油耗都会升高   而且转速低更容易积碳   所以宁愿高转也别低转</li>
+</ul>
+
+</div>
+
+  <footer>
+    
+    <p><a class="comments-link" href="/2011/06/02/car/#disqus_thread">View comments &raquo;</a></p>
+    
+    
+  </footer>
+
+
+    </article>
+  
+    
+
+
+
+
+
+
+
+
+
+
+    <article >
+      
+  <header>
+    <h1 class="entry-title">
+
+<a href="/2011/05/30/gentoo/">Gentoo安装记录</a>
+
+</h1>
+
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-05-30T00:00:00+08:00" pubdate data-updated="true">May 30<span>th</span>, 2011</time>
+         &bull; <a rel="bookmark" href="/2011/05/30/gentoo/">永久链接</a>
+      </p>
+    
+  </header>
+
+<div class="entry-content"><ul>
+<li>revdep-rebuild ibus降级，ibus-sunpinyin不好使。，用这个命令解决了。</li>
+<li>gvim 不能+gnome!!!!!!</li>
+</ul>
+
+
+<h3>真实安装</h3>
+
+<ul>
+<li>内核启动，挂在什么pre.sh : 内核要选DEVTMPFS和CONFIG_DEVTMPFS_MOUNT</li>
+<li>出现了一次 net.eth0这个找不到，稀里糊涂搞好了: ln net.lo -s net.eth0</li>
+<li>下载时，要下载stage3.tar.gz&#8230;否则麻烦</li>
+<li>下了，怎么传到vbox? 用ssh, 开了ssh，用securtcrt 控制vbox,可以粘贴了！</li>
+<li>选择源，163那个mirror可以，sync要用tom的:SYNC=&#8221;rsync://gentoo.tom.com/gentoo-portage&#8221;</li>
+<li>eth0: ln -s net.lo net.eth0</li>
+<li>rc-update add udev dhcpcd net.eth0 sshd default</li>
+<li>kworker high cpu: 重启之后就好了，不知道为什么</li>
+<li>eth0 dhcp</li>
+<li>gnome的menu 添加不了，看不见：用gdm加上就有了</li>
+<li>alsa: 要把device driver改为 module。否则音量控制键没有。&amp;&amp; alsamixer 要把 speaker unmute，纠结了半天。。</li>
+<li>gnome-terminal 设置unicode模式:???: 需要在xdm登入时，选择编码&#8230;&#8230;..LANG=C代表使用ascii..gnome3不能选，在systemsetting里选ch键盘不好使，再反选en_us,ok&#8230;..LANG已经变成en_us</li>
+<li>x : 挂在 no screens found, X -configure挂在no devices to configure: rc-update add udev boot /etc/init.d/udev start 搞了一天</li>
+<li>/dev/fb/62 not found: udev needs start</li>
+<li>mount /dev/sda1 /boot : ext2不支持问题：内核没吧ext2编译进去。用cd重编。。</li>
+<li>emerge是通过wget来获取程序源代码的，所以应该是编辑/etc/wgetrc文件来配置httpxx。具体做法你可以参考这个文件，里边有范例的。</li>
+</ul>
+
+
+<h1>字体</h1>
+
+<ul>
+<li>AR MING xxx 字体找不到: 是freedesktop的,在arphicfont包里&#8230;</li>
+</ul>
+
+
+<h3>others</h3>
+
+<ul>
+<li>lspci : emerge sys-apps/pciutils</li>
+<li>equery可查看已安装包的信息 emerge gentoolkit:  equery l</li>
+</ul>
+
+</div>
+
+  <footer>
+    
+    <p><a class="comments-link" href="/2011/05/30/gentoo/#disqus_thread">View comments &raquo;</a></p>
+    
+    
+  </footer>
+
+
+    </article>
+  
+  <div class="pagination">
+    
+      <a class="prev" href="/blog/page/4/">&larr; Older</a>
+    
+    <a href="/archives">Blog Archives</a>
+    
+    <a class="next" href="/blog/page/2/">Newer &rarr;</a>
+    
+  </div>
+</div>
+<aside class="sidebar">
+  
+    
+<section>
+  <img src="http://gravatar.com/avatar/68d77718da1b2b3dd4f95b81abaa8cc3" alt="Gravatar image" title="Gravatar Image" />
+</section>
+<section>
+  <h1>分类</h1>
+    <ul id="category-list"><li><a href='/blog/categories/embeded'>embeded (1)</a></li><li><a href='/blog/categories/linux'>linux (5)</a></li><li><a href='/blog/categories/ruby'>ruby (1)</a></li><li><a href='/blog/categories/vim'>vim (1)</a></li></ul>
+</section>
+<section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/2012/07/05/am355xboard/">am355x 开发板记录</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2012/06/08/planof2012/">2012展望</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2012/06/08/hello-octopress/">hello_octopress</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2012/03/27/lua/">lua</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2012/02/10/rabbithole/">rabbithole影评</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+
+
+  
+</aside>
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - jinleileiking -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'jinleileiking';
+			var disqus_developer = '1';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+  
+
+  
+
+  
+
+
+
+
+
+</body>
+</html>

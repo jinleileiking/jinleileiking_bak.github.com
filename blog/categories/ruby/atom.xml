@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: ruby | 童童爸的博客]]></title>
+  <link href="http://jinleileiking.github.com/blog/categories/ruby/atom.xml" rel="self"/>
+  <link href="http://jinleileiking.github.com/"/>
+  <updated>2013-03-02T18:22:26+08:00</updated>
+  <id>http://jinleileiking.github.com/</id>
+  <author>
+    <name><![CDATA[jinleileiking]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[sinatra source code hacking]]></title>
+    <link href="http://jinleileiking.github.com/2011/06/27/sinatra/"/>
+    <updated>2011-06-27T00:00:00+08:00</updated>
+    <id>http://jinleileiking.github.com/2011/06/27/sinatra</id>
+    <content type="html"><![CDATA[<p>```
+Application.run!
+  detect_rack_handler # select the first (webrick, thin, or ....)
+  handler.run self # Rack run ...
+  #......
+  # when http requested
+  Base.call ##　？？？？</p>
+
+<pre><code>synchronize { prototype.call(env) }
+   new
+     build
+        builder.run new!(*args, &amp;bk) ## ????
+</code></pre>
+
+<p>```</p>
+]]></content>
+  </entry>
+  
+</feed>

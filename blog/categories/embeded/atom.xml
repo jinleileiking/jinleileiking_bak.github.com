@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: embeded | 童童爸的博客]]></title>
+  <link href="http://jinleileiking.github.com/blog/categories/embeded/atom.xml" rel="self"/>
+  <link href="http://jinleileiking.github.com/"/>
+  <updated>2013-03-02T18:22:26+08:00</updated>
+  <id>http://jinleileiking.github.com/</id>
+  <author>
+    <name><![CDATA[jinleileiking]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[s3c2410板子上跑ruby]]></title>
+    <link href="http://jinleileiking.github.com/2011/07/29/s3c2410/"/>
+    <updated>2011-07-29T00:00:00+08:00</updated>
+    <id>http://jinleileiking.github.com/2011/07/29/s3c2410</id>
+    <content type="html"><![CDATA[<ul>
+<li><p>tool-chain
+** armlinux.org: arm-linux-gcc 2.95.0: cpp0: 只能放在usr/local</p></li>
+<li><p>busybox
+** make DOSTATIC=true TARGET_ARCH=arm CROSS=arm-linux- PREFIX=../root_china all install</p></li>
+<li><p>vivi
+<strong> net tftp 10.87.42.26 0x30008000 root_china.cramfs
+</strong> net flash root</p></li>
+<li><p>compile ruby 192</p></li>
+</ul>
+
+
+<p><code>env ac_cv_func_setpgrp_void=yes ./configure --host=arm-linux --target=arm-linux --disable-pthread --enable-shared --prefix=/home/jinleileiking/tools/embeded/ruby192</code></p>
+
+<ul>
+<li>chown -R  root:root *</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+</feed>
