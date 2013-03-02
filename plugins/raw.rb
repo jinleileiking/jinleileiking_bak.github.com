@@ -4,12 +4,12 @@
 module TemplateWrapper
   # Wrap input with a <div>
   def safe_wrap(input)
-    "<!--escape--><div class='escape-wrapper'><notextile><!--content-->#{input}<!--end-content--></notextile></div><!--end-escape-->"
+    "<div class='bogus-wrapper'><notextile>#{input}</notextile></div>"
   end
   # This must be applied after the
   def unwrap(input)
-    input.gsub /<!--escape-->([\s\S]*?)<!--content-->(.+?)<!--end-content-->([\s\S]*?)<!--end-escape-->/m do
-      $2
+    input.gsub /<div class='bogus-wrapper'><notextile>(.+?)<\/notextile><\/div>/m do
+      $1
     end
   end
 end
