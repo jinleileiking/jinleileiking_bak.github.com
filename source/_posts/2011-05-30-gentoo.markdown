@@ -2,6 +2,7 @@
 layout: post
 title: "gentoo安装记录" 
 categories: linux
+comments: true
 ---
 
 * revdep-rebuild ibus降级，ibus-sunpinyin不好使。，用这个命令解决了。
@@ -27,32 +28,12 @@ categories: linux
 * mount /dev/sda1 /boot : ext2不支持问题：内核没吧ext2编译进去。用cd重编。。
 * emerge是通过wget来获取程序源代码的，所以应该是编辑/etc/wgetrc文件来配置httpxx。具体做法你可以参考这个文件，里边有范例的。
 
-### 设置时间
 
-* 设置硬件时间clock --set --date="07/05/12 11:22"
-* 硬件时间 同步到 系统时间 sudo hwclock --hctosys
+# 字体
 
-
-### vbox
-
-* vbox ctrl+cv 原因是没有加入vbox组 
-* 扩大vbox分区: 
-** VBoxManage modifyhd xxx.vdi --resize 40000
-** 用gentoodisk启动
-** fdisk 改分区大小
-** resize2fs.... done... so easy
-* linux访问共享的win文件夹
-** sudo mount -t vboxsf d_drive /mnt/win7, 犯了个错误，vboxfs.....
-
-
-
+* AR MING xxx 字体找不到: 是freedesktop的,在arphicfont包里...
 
 ### others
 * lspci : emerge sys-apps/pciutils
 * equery可查看已安装包的信息 emerge gentoolkit:  equery l
-* usermod -a -G ftp tony
 
-### 常用命令
-* 
-
-### todo

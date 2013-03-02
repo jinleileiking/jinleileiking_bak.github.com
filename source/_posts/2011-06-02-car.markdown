@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "车记录" 
+comments: true
 ---
 
 ### 启动

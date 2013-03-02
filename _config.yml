@@ -103,9 +103,9 @@ respectfully_social: false
 #delicious_count: 3
 
 # Disqus Comments
-disqus_short_name:
-disqus_show_comment_count: false
-disqus_developer: 0
+disqus_short_name: jinleileiking
+disqus_show_comment_count: true
+disqus_developer: 1
 
 # Google Analytics
 #google_analytics_tracking_id:

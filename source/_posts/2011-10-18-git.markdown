@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "git" 
+comments: true
 ---
 
 * (use "git rm --cached <file>..." to unstage)
